@@ -5,23 +5,24 @@ using UnityEngine.UI;
 
 public enum AICommandType
 {
-	FOOD,
-	ROOM,
-	NATURAL_ENEMY,
+	GEN_NATURAL_ENEMY,
+	GEN_ROOM,
+	GEN_FOOD,
+	GEN_EGG,
 }
 
 public class AICommand {
 
 	AICommandType	m_type;
-	int		m_priority;
+	int		m_priority = 1;
+	string	m_uid;
 	Vector3	m_pos;
-	SpawnBaseObj	m_target;
-	bool m_digy = false;
 
-	public AICommand(AICommandType type, bool digy)
+	public AICommand(AICommandType type, string uid)
 	{
 		m_type = type;
-		m_digy = digy;
+		m_priority = (int)type;
+		m_uid = uid;
 	}
 
 	public AICommandType CommandType
@@ -37,20 +38,10 @@ public class AICommand {
 	public int Priority
 	{
 		get { return m_priority; }
-		set { m_priority = value; }
 	}
 
-	public SpawnBaseObj Target
+	public string UID
 	{
-		get {return m_target;}
-		set {
-			m_target = value;
-			m_pos = Target.transform.position;
-		}
-	}
-
-	public bool Digy
-	{
-		get {return m_digy;}
+		get {return m_uid;}
 	}
 }

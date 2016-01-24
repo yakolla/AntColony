@@ -1,24 +1,55 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 public class AntQueen : Ant {
 
-	// Use this for initialization
-	void Start () {
-	}
+	[SerializeField]
+	float		m_genEggTime = 1f;
+
+	bool		m_eggable = false;
+
+	float		m_elapsedTime = 0f;
+
+	RoomQueen	m_roomQueen = null;
+
+	[SerializeField]
+	Sprite 		m_eggSprite;
+
 
 	// Update is called once per frame
 	void Update () 
 	{
+		if (m_roomQueen == null)
+			return;
+
+		m_elapsedTime += Time.deltaTime;
+
+		if (m_elapsedTime > m_genEggTime)
+		{
+			m_elapsedTime -= m_genEggTime;
+
+			EggPeace egg = new EggPeace();
+			egg.Start(m_eggSprite.texture);
+
+			AICommand cmd = new AICommand(AICommandType.GEN_EGG, m_roomQueen.UID);
+			Helper.GetBackground().AICommandQueue(Helper.SpawnObjType.WorkerAnt).PushCommand(cmd);
+
+			m_roomQueen.CarryHolder.PutOn(egg);
+		}
 	}
 
 	override public void OnReachToGoal(SpawnBaseObj target)
 	{
-		AICommand cmd = Helper.GetBackground().AICommandQueue(m_type).PopCommand();
-		if (cmd != null)
+		base.OnReachToGoal(target);
+
+		if (target != null && target.Type == Helper.SpawnObjType.QueenRoom)
 		{
-			GetComponent<AntNavigator>().GoTo(cmd.Target, cmd.Digy);
+			m_eggable = true;
+			m_roomQueen = target as RoomQueen;
 		}
+
+		if (m_eggable == false && target == null)
+			ContinueNextAICommand();
 	}
 
 	override public void OnKill ()

@@ -10,6 +10,7 @@ public class Helper
 	public const int FOOD_TILE = 3;
 	public const int NATURAL_ENEMY_TILE = 4;
 	public const int BLOCK_TILE = 5;
+	public const int ONE_PEACE_SIZE = 16;
 
 	public enum SpawnObjType
 	{
@@ -20,6 +21,8 @@ public class Helper
 		Food,
 		QueenRoom,
 		FoodRoom,
+		EggRoom,
+		Egg,
 		Count
 	}
 
@@ -91,6 +94,8 @@ public class Helper
 		return _foodSpawningPool;
 		
 	}
+
+
 
 	public static void CheckTouched(System.Action<int, Vector3[]> callback)
 	{

@@ -18,15 +18,7 @@ public class AICommandQueue {
 			return null;
 
 		AICommand cmd = m_commands.Values[0];
-		if (cmd.Target != null)
-		{
-			if (0 == cmd.Target.HP)
-				m_commands.RemoveAt(0);
-		}
-		else
-		{
-			m_commands.RemoveAt(0);
-		}
+		m_commands.RemoveAt(0);
 
 		return cmd;
 	}

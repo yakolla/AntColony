@@ -10,7 +10,7 @@ public class Background : MonoBehaviour {
 	Color	m_color;
 
 	Vector3 m_startedTouchPos = Vector3.zero;
-
+	RectTransform	m_topPannel;
 
 	AICommandQueue[]	m_antAICommandQueue = new AICommandQueue[(int)Helper.SpawnObjType.Count];
 
@@ -18,6 +18,9 @@ public class Background : MonoBehaviour {
 	void Awake () {
 		
 		Screen.sleepTimeout = SleepTimeout.NeverSleep;
+
+		m_topPannel = GameObject.Find("HudGUI/Canvas/TopPanel").GetComponent<RectTransform>();
+		Debug.Log(m_topPannel.rect);
 
 		for(int i = 0; i < (int)Helper.SpawnObjType.Count; ++i)
 		{
@@ -47,6 +50,9 @@ public class Background : MonoBehaviour {
 		m_modifiedTexture.Update();
 
 		Helper.CheckTouchDraging((touchedCount, touchPos, touchPhase)=>{
+
+			if (touchPos.y > Screen.height-m_topPannel.rect.height)
+				return;
 
 			for (int i = 0; i < touchedCount; ++i) 
 			{

@@ -36,15 +36,27 @@ public class AntNavigator  : MonoBehaviour{
 		m_background.SetPixel(transform.position, Helper.OPEN_TILE);
 	}
 
-	public void GoTo(Vector3 goal, bool digy)
+	public bool Digy
+	{
+		get {return m_digy;}
+	}
+
+	void GoTo(Vector3 goal, bool digy)
 	{
 		m_goal = goal;
+		m_smallGoal = transform.position;
 		m_digy = digy;
-		m_target = null;
 	}
 
 	public void GoTo(SpawnBaseObj target, bool digy)
 	{
+		if (target == null)
+		{
+			GoTo(transform.position, false);
+			m_target = null;
+			return;
+		}
+
 		GoTo(target.transform.position, digy);
 		m_target = target;
 

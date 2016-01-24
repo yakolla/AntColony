@@ -21,10 +21,10 @@ public class RoomSpawningPool : SpawningPool<Room> {
 	{
 		base.StartBuilding(room);
 
-		AICommand cmd = new AICommand(AICommandType.ROOM, true);
-		cmd.Priority = 1;
-		cmd.Target = room;
-		Helper.GetBackground().AICommandQueue(Helper.SpawnObjType.WorkerAnt).PushCommand(cmd);
+		if (room.Type == Helper.SpawnObjType.QueenRoom)
+			Helper.GetBackground().AICommandQueue(Helper.SpawnObjType.QueenAnt).PushCommand(new AICommand(AICommandType.GEN_ROOM, room.UID));
+		else		
+			Helper.GetBackground().AICommandQueue(Helper.SpawnObjType.WorkerAnt).PushCommand(new AICommand(AICommandType.GEN_ROOM, room.UID));
 	}
 
 	void Start()

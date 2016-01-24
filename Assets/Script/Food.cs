@@ -5,21 +5,13 @@ public class Food : SpawnBaseObj {
 
 	ModifiedTexture2D	m_modifiedTexture = new ModifiedTexture2D();
 
-
-	int		m_sqrtHP;
-
-	[SerializeField]
-	Point m_slice;
-
-	void Start()
+	void Awake()
 	{
 
 		SpriteRenderer renderer = transform.Find("Body").GetComponent<SpriteRenderer>();
 		renderer.sprite = Sprite.Create(m_modifiedTexture.Init(renderer.sprite.texture), renderer.sprite.rect, new Vector2(0.5f, 0.5f));
+		MaxHP = (m_modifiedTexture.Width*m_modifiedTexture.Height)/(Helper.ONE_PEACE_SIZE*Helper.ONE_PEACE_SIZE);
 
-		m_sqrtHP = (int)Mathf.Sqrt(MaxHP);
-		m_slice.x = (m_modifiedTexture.Width/m_sqrtHP);
-		m_slice.y = (m_modifiedTexture.Height/m_sqrtHP);
 		HP = MaxHP;
 
 	}
@@ -29,25 +21,33 @@ public class Food : SpawnBaseObj {
 		m_modifiedTexture.Update();
 	}
 
-	override public void StartBuilding()
+	IEnumerator PeriodicSignal()
 	{
-		Point st = Point.ToPoint(transform.position);
+		while(HP > 0)
+		{
+			AICommand cmd = new AICommand(AICommandType.GEN_FOOD, UID);
+			Helper.GetBackground().AICommandQueue(Helper.SpawnObjType.WorkerAnt).PushCommand(cmd);
+			yield return new WaitForSeconds(0.5f);
+		}
 	}
 
-	public Texture2D	Slice()
+	override public void StartBuilding()
+	{
+		StartCoroutine(PeriodicSignal());
+	}
+
+	public CarryAble	Slice()
 	{
 		Texture2D tex = null;
 		int index = (MaxHP-HP);
 		--HP;
-		
-		int x = ((index%m_sqrtHP)*m_slice.x);
-		int y = (m_slice.y*(index/m_sqrtHP));
-		
-		tex = m_modifiedTexture.Slice(x, y, m_slice.x, m_slice.y, 0);
-		
+
+		tex = m_modifiedTexture.SliceByIndex(index, m_modifiedTexture.Width/Helper.ONE_PEACE_SIZE, Helper.ONE_PEACE_SIZE, Helper.ONE_PEACE_SIZE, 0);
+		FoodPeace peace = new FoodPeace();
+		peace.Start(tex);
 		if (0 == HP)
 			Helper.GetFoodSpawningPool().Kill(this);
 
-		return tex;
+		return peace;
 	}
 }
