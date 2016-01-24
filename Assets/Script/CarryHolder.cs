@@ -13,10 +13,11 @@ public class CarryHolder {
 	List<CarryAble>	m_carryAbles = new List<CarryAble>();
 
 	ModifiedTexture2D	m_modifiedTexture2D = new ModifiedTexture2D();
-
+	SpawnBaseObj	m_owner;
 	// Use this for initialization
-	public void Init (SpriteRenderer renderer, int rows, int cols, int carryCount) {
+	public void Init (SpawnBaseObj owner, SpriteRenderer renderer, int rows, int cols, int carryCount) {
 
+		m_owner = owner;
 		m_carryHolder = renderer;
 		m_width = cols*Helper.ONE_PEACE_SIZE;
 		m_height = rows*Helper.ONE_PEACE_SIZE;
@@ -77,5 +78,10 @@ public class CarryHolder {
 	public int CarryCount
 	{
 		get { return m_carryCount;}
+	}
+
+	public SpawnBaseObj Onwer
+	{
+		get {return m_owner;}
 	}
 }

@@ -4,9 +4,6 @@ using System.Collections.Generic;
 public class AntNavigator  : MonoBehaviour{
 
 	[SerializeField]
-	Vector3 m_start;
-
-	[SerializeField]
 	Vector3 m_goal;
 	Vector3	m_smallGoal;
 
@@ -29,7 +26,6 @@ public class AntNavigator  : MonoBehaviour{
 	Background m_background;
 	// Use this for initialization
 	public void Start () {
-		transform.position = m_start;
 		m_background = Helper.GetBackground();
 
 		m_smallGoal = transform.position;

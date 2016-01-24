@@ -28,7 +28,7 @@ public class ModifiedTexture2D {
 	public void SetPixel(int x, int y, byte value, Color32 color)
 	{
 		m_tiles[y, x] = value;
-		m_img.SetPixel(x, m_img.height-y, color);
+		m_img.SetPixel(x, m_img.height-y-1, color);
 	}
 
 	public void SetPixels32ByIndex(int index, int cols, int blockWidth, int blockHeight, byte value, Color32[] colors)

@@ -8,7 +8,7 @@ public class AntWorker : Ant {
 	// Use this for initialization
 	public void Awake () {
 		base.Awake();
-		m_carryHolder.Init(transform.Find("CarryHolder").GetComponent<SpriteRenderer>(), 1, 1, 0);
+		m_carryHolder.Init(this, transform.Find("CarryHolder").GetComponent<SpriteRenderer>(), 1, 1, 0);
 	}
 	
 	// Update is called once per frame

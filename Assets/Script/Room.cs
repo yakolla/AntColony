@@ -12,7 +12,7 @@ public class Room : SpawnBaseObj {
 
 	void Awake()
 	{
-		m_carryHolder.Init(transform.Find("CarryHolder").GetComponent<SpriteRenderer>(), m_roomSize.y/Helper.ONE_PEACE_SIZE, m_roomSize.x/Helper.ONE_PEACE_SIZE, m_roomSize.x*m_roomSize.y/(Helper.ONE_PEACE_SIZE*Helper.ONE_PEACE_SIZE));
+		m_carryHolder.Init(this, transform.Find("CarryHolder").GetComponent<SpriteRenderer>(), m_roomSize.y/Helper.ONE_PEACE_SIZE, m_roomSize.x/Helper.ONE_PEACE_SIZE, m_roomSize.x*m_roomSize.y/(Helper.ONE_PEACE_SIZE*Helper.ONE_PEACE_SIZE));
 	}
 
 	override public void StartBuilding()
