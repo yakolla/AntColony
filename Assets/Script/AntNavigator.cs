@@ -78,16 +78,19 @@ public class AntNavigator  : MonoBehaviour{
 			}
 			else
 			{
-				searchShortest(Point.ToPoint(transform.position), Point.ToPoint(m_goal));
+				Point cur = Point.ToPoint(transform.position);
+				searchShortest(cur, Point.ToPoint(m_goal));
 				if (0 < m_shortestNode.Count)
 				{
 					int nodeID = m_shortestNode.Values[0];
 
 					Point next = m_background.getPoint(nodeID);
 
-					m_smallGoal = Point.ToVector(next);
+					if (Mathf.Abs(cur.x - next.x) == 1 || Mathf.Abs(cur.y - next.y) == 1)
+						m_smallGoal = Point.ToVector(next);
+
 					m_closeNode.Add(nodeID);
-					m_openNode.Remove(nodeID);
+					m_openNode.Add(nodeID);
 					m_shortestNode.RemoveAt(0);
 				}
 				else
@@ -105,6 +108,7 @@ public class AntNavigator  : MonoBehaviour{
 
 	void searchShortest(Point cpt, Point gpt)
 	{
+
 		int[] ax = {-1, 0, 1, 0};
 		int[] ay = {0, -1, 0, 1};
 		for(int i = 0; i < 4; ++i)
@@ -126,16 +130,12 @@ public class AntNavigator  : MonoBehaviour{
 			
 			int distance = dy*dy + dx*dx;
 
-			if (m_background.Tiles[yy, xx] == Helper.CLOSE_TILE)
-			{
-				distance += (int)(distance*0.2F);
-			}
-			else if (m_background.Tiles[yy, xx] == Helper.BLOCK_TILE)
-			{
-				distance += (int)(distance*0.5F);
-			}
 
-			m_openNode.Add(nodeID);
+			if (m_background.Tiles[yy, xx] == Helper.CLOSE_TILE)
+				distance += (int)(distance*0.2F);
+			else if (m_background.Tiles[yy, xx] == Helper.HILL_TILE)
+				distance += (int)(distance*0.5F);
+
 			m_shortestNode.Add(distance, nodeID);
 
 		}

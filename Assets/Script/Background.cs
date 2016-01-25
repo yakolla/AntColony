@@ -35,7 +35,7 @@ public class Background : MonoBehaviour {
 			for(int x = 0; x < m_modifiedTexture.Width; ++x)
 			{
 				if (80 <= Random.Range(0, 100))
-					SetPixel(x, y, Helper.BLOCK_TILE);
+					SetPixel(x, y, Helper.HILL_TILE);
 				else
 					SetPixel(x, y, Helper.CLOSE_TILE);
 			}
