@@ -7,6 +7,7 @@ public class SpawnBaseObj : MonoBehaviour {
 	string m_uid;
 	[SerializeField]
 	int		m_maxHP = 4;
+	[SerializeField]
 	int		m_hp = 0;
 
 	[SerializeField]
@@ -21,6 +22,7 @@ public class SpawnBaseObj : MonoBehaviour {
 	public int MaxHP
 	{
 		get {return m_maxHP;}
+		set {m_maxHP = value;}
 	}
 
 	public int HP

@@ -11,9 +11,11 @@ public class AntSpawningPool : SpawningPool<Ant> {
 
 	public void OnClickAttack()
 	{
-		if (Helper.GetNaturalEnemySpawningPool().SpawnObjects.Count == 0)
+		if (Helper.GetNaturalEnemySpawningPool().SpawnKeys[Helper.SpawnObjType.NaturalEnemy].Count == 0)
 			return;
 
-		NaturalEnemySpawningPool.PushCommand(Helper.GetNaturalEnemySpawningPool().SpawnObjects[Helper.GetNaturalEnemySpawningPool().SpawnKeys[0]]);
+		string uid = Helper.GetNaturalEnemySpawningPool().SpawnKeys[Helper.SpawnObjType.NaturalEnemy][0];
+		AICommand cmd = new AICommand(AICommandType.GEN_NATURAL_ENEMY, uid);
+		Helper.GetBackground().AICommandQueue(Helper.SpawnObjType.NaturalEnemy).PushCommand(cmd);
 	}
 }
