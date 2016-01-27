@@ -91,6 +91,9 @@ public class AntNavigator  : MonoBehaviour{
 						if (Mathf.Abs(cur.x - next.x) == 1 || Mathf.Abs(cur.y - next.y) == 1)
 						{
 							m_smallGoal = Point.ToVector(next);
+							float radian = Mathf.Atan2(m_smallGoal.y-transform.position.y, m_smallGoal.x-transform.position.x);
+							transform.rotation = Quaternion.Euler(0, 0, radian*Mathf.Rad2Deg);
+
 							m_closeNode.Add(nodeID);
 							m_openNode.Add(nodeID);
 							m_shortestNode.RemoveAt(0);
