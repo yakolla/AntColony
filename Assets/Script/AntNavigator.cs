@@ -82,20 +82,33 @@ public class AntNavigator  : MonoBehaviour{
 				searchShortest(cur, Point.ToPoint(m_goal));
 				if (0 < m_shortestNode.Count)
 				{
-					int nodeID = m_shortestNode.Values[0];
+					while(0 < m_shortestNode.Count)
+					{
+						int nodeID = m_shortestNode.Values[0];
+						
+						Point next = m_background.getPoint(nodeID);
+						
+						if (Mathf.Abs(cur.x - next.x) == 1 || Mathf.Abs(cur.y - next.y) == 1)
+						{
+							m_smallGoal = Point.ToVector(next);
+							m_closeNode.Add(nodeID);
+							m_openNode.Add(nodeID);
+							m_shortestNode.RemoveAt(0);
+							break;
+						}
+						
+						m_closeNode.Add(nodeID);
+						m_openNode.Add(nodeID);
+						m_shortestNode.RemoveAt(0);
+					}
 
-					Point next = m_background.getPoint(nodeID);
-
-					if (Mathf.Abs(cur.x - next.x) == 1 || Mathf.Abs(cur.y - next.y) == 1)
-						m_smallGoal = Point.ToVector(next);
-
-					m_closeNode.Add(nodeID);
-					m_openNode.Add(nodeID);
-					m_shortestNode.RemoveAt(0);
 				}
 				else
 				{
-					OnReachToGoal();
+					m_closeNode.Clear();
+					m_shortestNode.Clear();
+					m_openNode.Clear();
+					GoTo(m_target, true);
 				}
 			}
 		}

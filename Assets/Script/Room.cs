@@ -22,7 +22,7 @@ public class Room : SpawnBaseObj {
 		{
 			for(int x = 0; x < 4; ++x)
 			{
-				Helper.GetBackground().SetPixel(st.x+x, st.y+y, Helper.ROOM_TILE);
+				//Helper.GetBackground().SetPixel(st.x+x, st.y+y, Helper.ROOM_TILE);
 			}
 		}
 		Helper.GetBackground().SetPixel(st.x, st.y, Helper.OPEN_TILE);

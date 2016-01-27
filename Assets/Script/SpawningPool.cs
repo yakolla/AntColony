@@ -8,12 +8,18 @@ public class SpawningPool<T>  : MonoBehaviour where T : SpawnBaseObj  {
 	Dictionary<string, T>	m_objs = new Dictionary<string, T>();
 
 	[SerializeField]
-	GameObject []	m_prefObjs;
+	protected GameObject []	m_prefObjs;
+
+	[SerializeField]
+	int	m_maxSpawnCount = 0;
 
 	virtual public void OnClickSpawn(int index){}
 
 	public T Spawn(int index)
 	{		
+		if (m_maxSpawnCount > 0 && m_objs.Count >= m_maxSpawnCount)
+			return null;
+
 		GameObject obj = Instantiate(m_prefObjs[index]) as GameObject;
 		obj.name = m_prefObjs[index].name;
 		obj.GetComponent<T>().UID = System.Guid.NewGuid().ToString();
@@ -22,6 +28,9 @@ public class SpawningPool<T>  : MonoBehaviour where T : SpawnBaseObj  {
 
 	virtual public void StartBuilding(T spawned)
 	{
+		if (spawned == null)
+			return;
+
 		if (false == m_keys.ContainsKey(spawned.Type))
 		{
 			m_types.Add(spawned.Type);			

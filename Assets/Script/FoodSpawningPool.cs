@@ -6,7 +6,7 @@ public class FoodSpawningPool : SpawningPool<Food> {
 
 	override public void OnClickSpawn(int index)
 	{
-		StartBuilding(Spawn(index));
+		StartBuilding(Spawn(Random.Range(0, m_prefObjs.Length)));
 	}
 
 

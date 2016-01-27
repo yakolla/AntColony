@@ -16,7 +16,8 @@ public class Background : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
-		
+		Application.runInBackground = true;
+
 		Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
 		m_topPannel = GameObject.Find("HudGUI/Canvas/TopPanel").GetComponent<RectTransform>();

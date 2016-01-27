@@ -28,8 +28,11 @@ public class EggPeace : CarryAble {
 	override public void OnKill()
 	{
 		Ant ant = Helper.GetAntSpawningPool().Spawn(1);
-		ant.transform.position = m_holder.Onwer.transform.position;
-		Helper.GetAntSpawningPool().StartBuilding(ant);
+		if (ant != null)
+		{
+			ant.transform.position = m_holder.Onwer.transform.position;
+			Helper.GetAntSpawningPool().StartBuilding(ant);
+		}
 
 		base.OnKill();
 	}
