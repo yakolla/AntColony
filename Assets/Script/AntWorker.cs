@@ -14,6 +14,7 @@ public class AntWorker : Ant {
 	// Update is called once per frame
 	void Update () 
 	{
+		base.Update();
 	}
 
 	override public void OnKill ()

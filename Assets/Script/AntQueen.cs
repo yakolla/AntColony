@@ -8,7 +8,7 @@ public class AntQueen : Ant {
 
 	bool		m_eggable = false;
 
-	float		m_elapsedTime = 0f;
+	float		m_eggElapsedTime = 0f;
 
 	RoomQueen	m_roomQueen = null;
 
@@ -19,14 +19,16 @@ public class AntQueen : Ant {
 	// Update is called once per frame
 	void Update () 
 	{
+		base.Update();
+
 		if (m_roomQueen == null)
 			return;
 
-		m_elapsedTime += Time.deltaTime;
+		m_eggElapsedTime += Time.deltaTime;
 
-		if (m_elapsedTime > m_genEggTime)
+		if (m_eggElapsedTime > m_genEggTime)
 		{
-			m_elapsedTime -= m_genEggTime;
+			m_eggElapsedTime -= m_genEggTime;
 
 			EggPeace egg = new EggPeace();
 			egg.Start(m_eggSprite.texture);
@@ -38,18 +40,43 @@ public class AntQueen : Ant {
 		}
 	}
 
+	override public void DoDefaultAI()
+	{
+		bool gotoRoomQueen = true;
+		if (m_roomQueen != null)
+		{
+			if (0 == Vector3.Distance(m_roomQueen.transform.position, transform.position))
+			{
+				gotoRoomQueen = false;
+			}
+		}
+
+		if (gotoRoomQueen == true)
+		{
+			SpawnBaseObj target = SelectRandomRoom( Helper.SpawnObjType.QueenRoom, false );
+			m_navigator.GoTo(target, false);
+		}
+	}
+
 	override public void OnReachToGoal(SpawnBaseObj target)
 	{
 		base.OnReachToGoal(target);
 
-		if (target != null && target.Type == Helper.SpawnObjType.QueenRoom)
+		if (target != null)
 		{
-			m_eggable = true;
-			m_roomQueen = target as RoomQueen;
+			Helper.SpawnObjType type = target.Type;
+			
+			switch(type)
+			{
+			
+			case Helper.SpawnObjType.QueenRoom:
+				m_roomQueen = target as RoomQueen;
+				break;
+			}
 		}
+		
+		ContinueNextAICommand();
 
-		if (m_eggable == false && target == null)
-			ContinueNextAICommand();
 	}
 
 	override public void OnKill ()

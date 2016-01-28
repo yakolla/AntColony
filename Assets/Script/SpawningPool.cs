@@ -43,7 +43,7 @@ public class SpawningPool<T>  : MonoBehaviour where T : SpawnBaseObj  {
 		spawned.StartBuilding();
 	}
 
-	public T SpawnObject(string uid)
+	public T GetSpawnedObject(string uid)
 	{
 		if (m_objs.ContainsKey(uid))
 			return m_objs[uid];

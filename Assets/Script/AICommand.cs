@@ -9,6 +9,7 @@ public enum AICommandType
 	GEN_ROOM,
 	GEN_FOOD,
 	GEN_EGG,
+	EAT_FOOD,
 }
 
 public class AICommand {
