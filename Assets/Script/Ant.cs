@@ -6,35 +6,45 @@ public class Ant : SpawnBaseObj {
 	protected AntNavigator	m_navigator;
 
 	[SerializeField]
+	int			m_team = 0;
+
+	[SerializeField]
 	int			m_hunger = 10;
 	[SerializeField]
 	int			m_maxHunger = 10;
 
-	[SerializeField]
-	float		m_hungerTime = 10f;
-	float		m_hungerElapsedTime = 0f;
+	Animator	m_animator;
+
 
 	AICommand m_cmd = null;
+
+	protected CarryHolder	m_carryHolder = new CarryHolder();
 
 	public void Awake()
 	{
 		m_navigator = GetComponent<AntNavigator>();
 		m_hunger = m_maxHunger;
+		m_carryHolder.Init(this, transform.Find("CarryHolder").GetComponent<SpriteRenderer>(), 1, 1, 0);
+		HP = MaxHP;
+		m_animator = GetComponent<Animator>();
+		StartCoroutine(LoopHenger());
+	}
+
+	IEnumerator LoopHenger()
+	{
+		while (m_hunger > 0)
+		{
+			yield return new WaitForSeconds(1f);
+			--m_hunger;
+		}
 	}
 
 	public void Update()
 	{
-		m_hungerElapsedTime += Time.deltaTime;
-		if (m_hungerElapsedTime >= m_hungerTime)
-		{
-			m_hungerElapsedTime -= m_hungerTime;
-			--m_hunger;
-
-			if (m_hunger == 0)
-			{
-				Helper.GetAntSpawningPool().Kill(this);
-			}
-		}
+		if (HP <= 0)
+			Helper.GetAntSpawningPool().Kill(this);
+		else if (m_hunger <= 0)
+			Helper.GetAntSpawningPool().Kill(this);
 	}
 
 	protected Room SelectRandomRoom(bool digy)
@@ -78,7 +88,7 @@ public class Ant : SpawnBaseObj {
 		bool digy = true;
 		SpawnBaseObj target = null;
 
-		if (m_hunger < 3)
+		if (m_hunger < 60)
 		{
 			Room room = SelectRandomRoom(Helper.SpawnObjType.FoodRoom, false);
 			if (room != null)
@@ -155,5 +165,21 @@ public class Ant : SpawnBaseObj {
 		}
 	}
 
+	public int Team
+	{
+		get {return m_team;}
+	}
 
+	public void Attack(Ant victim)
+	{
+		victim.HP--;
+		m_navigator.Stop();
+		m_animator.SetTrigger("Attack");
+	}
+
+	public void OnAttackAniFinish()
+	{
+		m_navigator.RestartGo();
+
+	}
 }

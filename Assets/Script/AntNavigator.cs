@@ -19,7 +19,7 @@ public class AntNavigator  : MonoBehaviour{
 	HashSet<int> m_openNode = new HashSet<int>();
 	HashSet<int> m_closeNode = new HashSet<int>();
 
-
+	bool		m_stop = false;
 
 	SortedList<int, int> m_shortestNode = new SortedList<int, int>(new Helper.DuplicateKeyComparer<int>());
 
@@ -42,6 +42,17 @@ public class AntNavigator  : MonoBehaviour{
 		m_goal = goal;
 		m_smallGoal = transform.position;
 		m_digy = digy;
+		m_stop = false;
+	}
+
+	public void RestartGo()
+	{
+		m_stop = false;
+	}
+
+	public void Stop()
+	{
+		m_stop = true;
 	}
 
 	public void GoTo(SpawnBaseObj target, bool digy)
@@ -70,6 +81,9 @@ public class AntNavigator  : MonoBehaviour{
 	// Update is called once per frame
 	public void Update () 
 	{
+		if (m_stop == true)
+			return;
+
 		if (0 == Point.Distance(m_smallGoal, transform.position))
 		{
 			if (0 == Point.Distance(m_goal, transform.position))

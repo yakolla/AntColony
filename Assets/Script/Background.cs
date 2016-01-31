@@ -1,16 +1,23 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.UI;
 
 public class Background : MonoBehaviour {
 
 	ModifiedTexture2D	m_modifiedTexture = new ModifiedTexture2D();
+	byte[,] m_tiles;
 
 	[SerializeField]
 	Color	m_color;
 
+	[SerializeField]
+	int		m_maxFadingTile = 10;
+
 	Vector3 m_startedTouchPos = Vector3.zero;
 	RectTransform	m_topPannel;
+
+	Dictionary<int, int>	m_openTiles = new Dictionary<int, int>();
 
 	AICommandQueue[]	m_antAICommandQueue = new AICommandQueue[(int)Helper.SpawnObjType.Count];
 
@@ -30,7 +37,7 @@ public class Background : MonoBehaviour {
 
 		SpriteRenderer renderer = transform.Find("Body").GetComponent<SpriteRenderer>();
 		renderer.sprite = Sprite.Create(m_modifiedTexture.Init(renderer.sprite.texture), renderer.sprite.rect, new Vector2(0f, 1f), 10);
-
+		m_tiles = new byte[m_modifiedTexture.Height, m_modifiedTexture.Width];
 		for(int y = 0; y < m_modifiedTexture.Height; ++y)
 		{
 			for(int x = 0; x < m_modifiedTexture.Width; ++x)
@@ -44,12 +51,52 @@ public class Background : MonoBehaviour {
 
 		for(int x = 0; x < m_modifiedTexture.Width; ++x)
 			SetPixel(x, 0, Helper.CLOSE_TILE);
+
+	}
+
+	void Start()
+	{
+		StartCoroutine(LoopFadingTile());
+	}
+
+	IEnumerator	LoopFadingTile()
+	{
+		List<int> deletedTile = new List<int>();
+
+		while(true)
+		{
+			List<int> keys = new List<int> (m_openTiles.Keys);
+			foreach(int key in keys)
+			{
+
+				--m_openTiles[key];
+				
+				if (m_openTiles[key] <= 0)
+				{
+					deletedTile.Add(key);
+					Point pt = getPoint(key);
+					SetPixel(pt.x, pt.y, 0);
+				}
+				
+			}
+
+			foreach(int nodeID in deletedTile)
+			{
+				m_openTiles.Remove(nodeID);
+			}
+
+			deletedTile.Clear();
+
+			yield return new WaitForSeconds(1f);
+		}
+
+
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		m_modifiedTexture.Update();
-
+		LoopFadingTile();
 		Helper.CheckTouchDraging((touchedCount, touchPos, touchPhase)=>{
 
 			if (touchPos.y > Screen.height-m_topPannel.rect.height)
@@ -82,9 +129,15 @@ public class Background : MonoBehaviour {
 
 	public void SetPixel(int x, int y, byte value)
 	{
+		m_tiles[y, x] = value;
+
 		switch(value)
 		{
 		case Helper.OPEN_TILE:
+			if (m_openTiles.ContainsKey(getNodeID(x,y)) == false)
+				m_openTiles.Add(getNodeID(x,y), m_maxFadingTile);
+			else
+				m_openTiles[getNodeID(x,y)] = m_maxFadingTile;
 			m_modifiedTexture.SetPixel(x, y, value, new Color32(0, 0, 0, 1));
 			break;
 		case Helper.ROOM_TILE:
@@ -114,7 +167,7 @@ public class Background : MonoBehaviour {
 	public byte[,] Tiles
 	{
 		get {
-			return m_modifiedTexture.Tiles;
+			return m_tiles;
 		}
 	}
 

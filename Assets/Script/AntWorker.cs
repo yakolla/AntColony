@@ -3,13 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 public class AntWorker : Ant {
 
-	CarryHolder	m_carryHolder = new CarryHolder();
 
-	// Use this for initialization
-	public void Awake () {
-		base.Awake();
-		m_carryHolder.Init(this, transform.Find("CarryHolder").GetComponent<SpriteRenderer>(), 1, 1, 0);
-	}
+
+
 	
 	// Update is called once per frame
 	void Update () 

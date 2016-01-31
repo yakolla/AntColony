@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class ModifiedTexture2D {
 
 	Texture2D m_img;
-	byte[,] m_tiles;
+
 
 	// Use this for initialization
 	public Texture2D Init (Texture2D img) {
@@ -15,7 +15,7 @@ public class ModifiedTexture2D {
 		m_img = new Texture2D(img.width, img.height);
 		m_img.SetPixels(img.GetPixels());
 
-		m_tiles = new byte[m_img.height, m_img.width];
+
 
 		return m_img;
 	}
@@ -27,7 +27,6 @@ public class ModifiedTexture2D {
 
 	public void SetPixel(int x, int y, byte value, Color32 color)
 	{
-		m_tiles[y, x] = value;
 		m_img.SetPixel(x, m_img.height-y-1, color);
 	}
 
@@ -75,13 +74,6 @@ public class ModifiedTexture2D {
 	public bool UnableTo(int x, int y)
 	{
 		return x < 0 || y < 0 || x >= m_img.width || y >= m_img.height;
-	}
-
-	public byte[,] Tiles
-	{
-		get {
-			return m_tiles;
-		}
 	}
 
 	public int Height

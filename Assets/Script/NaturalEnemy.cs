@@ -9,6 +9,12 @@ public class NaturalEnemy : Ant {
 		Helper.GetBackground().SetPixel(st.x, st.y, Helper.NATURAL_ENEMY_TILE);	
 	}
 
+	void Update()
+	{
+		if (HP <= 0)
+			Helper.GetNaturalEnemySpawningPool().Kill(this);
+	}
+
 	override public void OnReachToGoal(SpawnBaseObj target)
 	{
 		base.OnReachToGoal(target);
@@ -18,14 +24,10 @@ public class NaturalEnemy : Ant {
 
 	void OnTriggerEnter2D(Collider2D other) {
 		Ant ant = other.gameObject.GetComponent<Ant>();
-		if (ant != null && ant.Type != Helper.SpawnObjType.NaturalEnemy)
+		if (ant != null && ant.Team != Team)
 		{
-			--HP;
-			Helper.GetAntSpawningPool().Kill(ant);
-
-			if (0 == HP)
-				Helper.GetNaturalEnemySpawningPool().Kill(this);
-			
+			ant.Attack(this);
+			Attack (ant);
 		}
 	}
 }
