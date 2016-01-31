@@ -21,6 +21,8 @@ public class Background : MonoBehaviour {
 
 	AICommandQueue[]	m_antAICommandQueue = new AICommandQueue[(int)Helper.SpawnObjType.Count];
 
+	Vector3[]		m_randomGround = new Vector3[3];
+
 	// Use this for initialization
 	void Awake () {
 		Application.runInBackground = true;
@@ -52,6 +54,9 @@ public class Background : MonoBehaviour {
 		for(int x = 0; x < m_modifiedTexture.Width; ++x)
 			SetPixel(x, 0, Helper.CLOSE_TILE);
 
+		m_randomGround[0] = Vector3.zero;
+		m_randomGround[1] = new Vector3(m_modifiedTexture.Width/2, 0, 0);
+		m_randomGround[2] = new Vector3(m_modifiedTexture.Width-1, 0, 0);
 	}
 
 	void Start()
@@ -192,5 +197,10 @@ public class Background : MonoBehaviour {
 	public AICommandQueue AICommandQueue(Helper.SpawnObjType type)
 	{
 		return m_antAICommandQueue[(int)type];
+	}
+
+	public Vector3	GetRandomGround()
+	{
+		return m_randomGround[Random.Range(0, m_randomGround.Length)];
 	}
 }

@@ -28,6 +28,7 @@ public class Ant : SpawnBaseObj {
 		HP = MaxHP;
 		m_animator = GetComponent<Animator>();
 		StartCoroutine(LoopHenger());
+
 	}
 
 	IEnumerator LoopHenger()
@@ -78,9 +79,18 @@ public class Ant : SpawnBaseObj {
 
 	virtual public void DoDefaultAI()
 	{
-		bool digy = true;
-		SpawnBaseObj target = SelectRandomRoom(digy = m_navigator.Digy);
-		m_navigator.GoTo(target, digy);
+
+		if (Random.Range(0, 2) == 0)			
+		{
+			m_navigator.GoTo(Helper.GetBackground().GetRandomGround(), false);
+		}
+		else
+		{
+			bool digy = true;
+			SpawnBaseObj target = SelectRandomRoom(digy = m_navigator.Digy);
+			m_navigator.GoTo(target, digy);
+		}
+
 	}
 
 	public void ContinueNextAICommand()
@@ -181,5 +191,13 @@ public class Ant : SpawnBaseObj {
 	{
 		m_navigator.RestartGo();
 
+	}
+
+	void OnTriggerEnter2D(Collider2D other) {
+		Ant ant = other.gameObject.GetComponent<Ant>();
+		if (ant != null && ant.Team != Team)
+		{
+			Attack (ant);
+		}
 	}
 }

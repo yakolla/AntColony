@@ -22,12 +22,4 @@ public class NaturalEnemy : Ant {
 		m_navigator.GoTo(SelectRandomRoom(false), false);
 	}
 
-	void OnTriggerEnter2D(Collider2D other) {
-		Ant ant = other.gameObject.GetComponent<Ant>();
-		if (ant != null && ant.Team != Team)
-		{
-			ant.Attack(this);
-			Attack (ant);
-		}
-	}
 }

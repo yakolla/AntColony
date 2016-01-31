@@ -37,7 +37,7 @@ public class AntNavigator  : MonoBehaviour{
 		get {return m_digy;}
 	}
 
-	void GoTo(Vector3 goal, bool digy)
+	public void GoTo(Vector3 goal, bool digy)
 	{
 		m_goal = goal;
 		m_smallGoal = transform.position;
@@ -168,6 +168,8 @@ public class AntNavigator  : MonoBehaviour{
 
 			m_shortestNode.Add(distance, nodeID);
 
+			if (m_digy == false)
+				break;
 		}
 
 	}
