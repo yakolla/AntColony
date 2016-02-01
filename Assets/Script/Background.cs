@@ -30,7 +30,6 @@ public class Background : MonoBehaviour {
 		Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
 		m_topPannel = GameObject.Find("HudGUI/Canvas/TopPanel").GetComponent<RectTransform>();
-		Debug.Log(m_topPannel.rect);
 
 		for(int i = 0; i < (int)Helper.SpawnObjType.Count; ++i)
 		{
