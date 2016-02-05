@@ -5,6 +5,7 @@ public class CarryAble
 {
 	protected Texture2D m_tex;
 	protected CarryHolder m_holder;
+	protected int	m_colony;
 
 	virtual public  void Start(Texture2D tex)
 	{
@@ -29,6 +30,8 @@ public class CarryAble
 	virtual public  void SetCarryHolder(CarryHolder holder)
 	{
 		m_holder = holder;
+		if (holder != null)
+			m_colony = holder.Onwer.Colony;
 	}
 
 	public Texture2D Img

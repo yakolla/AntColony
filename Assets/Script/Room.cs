@@ -1,18 +1,34 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
+
+
 public class Room : SpawnBaseObj {
 
+	[System.Serializable]
+	public class RoomSerialData
+	{
+		public Point 	m_roomSize;
+		
+		public bool		m_hasPath = false;
+		public int		m_progress = 0;
+	}
 	[SerializeField]
-	protected Point			m_roomSize;
-
-	protected bool	m_hasPath = false;
+	RoomSerialData	m_roomSerialData;
 
 	CarryHolder	m_carryHolder = new CarryHolder();
 
+	SpriteRenderer	m_render;
+
 	void Awake()
 	{
-		m_carryHolder.Init(this, transform.Find("CarryHolder").GetComponent<SpriteRenderer>(), m_roomSize.y/Helper.ONE_PEACE_SIZE, m_roomSize.x/Helper.ONE_PEACE_SIZE, m_roomSize.x*m_roomSize.y/(Helper.ONE_PEACE_SIZE*Helper.ONE_PEACE_SIZE));
+		m_carryHolder.Init(this, transform.Find("CarryHolder").GetComponent<SpriteRenderer>(), m_roomSerialData.m_roomSize.y/Helper.ONE_PEACE_SIZE, m_roomSerialData.m_roomSize.x/Helper.ONE_PEACE_SIZE, m_roomSerialData.m_roomSize.x*m_roomSerialData.m_roomSize.y/(Helper.ONE_PEACE_SIZE*Helper.ONE_PEACE_SIZE));
+		m_render = transform.Find("Body").GetComponent<SpriteRenderer>();
 	}
 
 	override public void StartBuilding()
@@ -41,7 +57,37 @@ public class Room : SpawnBaseObj {
 
 	public bool HasPath
 	{
-		get {return m_hasPath;}
-		set {m_hasPath = value;}
+		get {return m_roomSerialData.m_hasPath;}
+		set {
+			m_roomSerialData.m_hasPath = value;
+			if (m_roomSerialData.m_hasPath == true)
+			{
+				Progress+=10;
+			}
+		}
+	}
+
+	public int Progress
+	{
+		get {return m_roomSerialData.m_progress;}
+		set {
+			m_roomSerialData.m_progress = value;
+			m_roomSerialData.m_progress = Mathf.Min(100, m_roomSerialData.m_progress);
+			Color color = m_render.color;
+			color.a = m_roomSerialData.m_progress/100f;
+			m_render.color = color;
+		}
+	}
+
+	override public void Serialize(StreamWriter writer)
+	{
+		base.Serialize(writer);
+		writer.WriteLine(JsonConvert.SerializeObject(m_roomSerialData));
+	}
+
+	override public void Deserialize(StreamReader reader)
+	{
+		base.Deserialize(reader);
+		m_roomSerialData = JsonConvert.DeserializeObject<RoomSerialData>(reader.ReadLine());
 	}
 }

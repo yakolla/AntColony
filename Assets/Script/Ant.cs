@@ -1,12 +1,9 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 public class Ant : SpawnBaseObj {
 
 	protected AntNavigator	m_navigator;
-
-	[SerializeField]
-	int			m_team = 0;
 
 	[SerializeField]
 	int			m_hunger = 10;
@@ -42,35 +39,33 @@ public class Ant : SpawnBaseObj {
 
 	public void Update()
 	{
-		if (HP <= 0)
-			Helper.GetAntSpawningPool().Kill(this);
-		else if (m_hunger <= 0)
-			Helper.GetAntSpawningPool().Kill(this);
+		if (HP <= 0 || m_hunger <= 0)
+			Helper.GetColony(Colony).AntSpawningPool.Kill(this);
 	}
 
 	protected Room SelectRandomRoom(bool digy)
 	{
-		int roomTypeCount = Helper.GetRoomSpawningPool().Types.Count;
+		int roomTypeCount = Helper.GetColony(Colony).RoomSpawningPool.Types.Count;
 		if (roomTypeCount == 0)
 			return null;
 
-		Helper.SpawnObjType randType = Helper.GetRoomSpawningPool().Types[Random.Range(0, roomTypeCount)];
+		SpawnObjType randType = Helper.GetColony(Colony).RoomSpawningPool.Types[Random.Range(0, roomTypeCount)];
 		return SelectRandomRoom(randType, digy);
 	
 	}
 
-	protected Room SelectRandomRoom(Helper.SpawnObjType type, bool digy)
+	protected Room SelectRandomRoom(SpawnObjType type, bool digy)
 	{
-		if (false == Helper.GetRoomSpawningPool().Types.Contains(type))
+		if (false == Helper.GetColony(Colony).RoomSpawningPool.Types.Contains(type))
 			return null;
 
-		int roomCount = Helper.GetRoomSpawningPool().SpawnKeys[type].Count;
+		int roomCount = Helper.GetColony(Colony).RoomSpawningPool.SpawnKeys[type].Count;
 		if (roomCount == 0)
 			return null;
 
-		string randKey = Helper.GetRoomSpawningPool().SpawnKeys[type][Random.Range(0, roomCount)];
+		string randKey = Helper.GetColony(Colony).RoomSpawningPool.SpawnKeys[type][Random.Range(0, roomCount)];
 
-		Room room = Helper.GetRoomSpawningPool().GetSpawnedObject(randKey).GetComponent<Room>();
+		Room room = Helper.GetColony(Colony).RoomSpawningPool.GetSpawnedObject(randKey).GetComponent<Room>();
 		if (digy == false && room.HasPath == false)
 			return null;
 
@@ -100,7 +95,7 @@ public class Ant : SpawnBaseObj {
 
 		if (m_hunger < 60)
 		{
-			Room room = SelectRandomRoom(Helper.SpawnObjType.FoodRoom, false);
+			Room room = SelectRandomRoom(SpawnObjType.RoomFood, false);
 			if (room != null)
 				m_cmd = new AICommand(AICommandType.EAT_FOOD, room.UID );
 			else
@@ -108,7 +103,7 @@ public class Ant : SpawnBaseObj {
 		}
 		else
 		{
-			m_cmd = Helper.GetBackground().AICommandQueue(m_type).PopCommand();
+			m_cmd = Helper.GetColony(Colony).AICommandQueue(Type).PopCommand();
 		}
 
 		if (m_cmd != null)
@@ -116,23 +111,23 @@ public class Ant : SpawnBaseObj {
 			switch(m_cmd.CommandType)
 			{
 			case AICommandType.GEN_EGG:
-				target = Helper.GetRoomSpawningPool().GetSpawnedObject(m_cmd.UID);
+				target = Helper.GetColony(Colony).RoomSpawningPool.GetSpawnedObject(m_cmd.UID);
 				digy = false;
 				break;
 			case AICommandType.GEN_FOOD:
-				target = Helper.GetFoodSpawningPool().GetSpawnedObject(m_cmd.UID);
+				target = Helper.GetColony(Colony).FoodSpawningPool.GetSpawnedObject(m_cmd.UID);
 				digy = false;
 				break;
 			case AICommandType.EAT_FOOD:
-				target = Helper.GetRoomSpawningPool().GetSpawnedObject(m_cmd.UID);
+				target = Helper.GetColony(Colony).RoomSpawningPool.GetSpawnedObject(m_cmd.UID);
 				digy = false;
 				break;
 			case AICommandType.GEN_NATURAL_ENEMY:
-				target = Helper.GetNaturalEnemySpawningPool().GetSpawnedObject(m_cmd.UID);
+				target = Helper.GetColony(Colony).NaturalEnemySpawningPool.GetSpawnedObject(m_cmd.UID);
 				digy = false;
 				break;
 			case AICommandType.GEN_ROOM:
-				target = Helper.GetRoomSpawningPool().GetSpawnedObject(m_cmd.UID);
+				target = Helper.GetColony(Colony).RoomSpawningPool.GetSpawnedObject(m_cmd.UID);
 				digy = true;
 				break;
 			}
@@ -154,11 +149,11 @@ public class Ant : SpawnBaseObj {
 
 		if (target != null && m_cmd != null)
 		{
-			Helper.SpawnObjType type = target.Type;
+			SpawnObjType type = target.Type;
 			
 			switch(type)
 			{
-			case Helper.SpawnObjType.FoodRoom:
+			case SpawnObjType.RoomFood:
 				RoomFood roomFood = target.GetComponent<RoomFood>();
 				if (m_cmd.CommandType == AICommandType.EAT_FOOD)
 				{
@@ -173,11 +168,6 @@ public class Ant : SpawnBaseObj {
 			}
 
 		}
-	}
-
-	public int Team
-	{
-		get {return m_team;}
 	}
 
 	public void Attack(Ant victim)
@@ -195,7 +185,7 @@ public class Ant : SpawnBaseObj {
 
 	void OnTriggerEnter2D(Collider2D other) {
 		Ant ant = other.gameObject.GetComponent<Ant>();
-		if (ant != null && ant.Team != Team)
+		if (ant != null && ant.Colony != Colony)
 		{
 			Attack (ant);
 		}

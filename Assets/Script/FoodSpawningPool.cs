@@ -4,9 +4,9 @@ using System.Collections.Generic;
 public class FoodSpawningPool : SpawningPool<Food> {
 
 
-	override public void OnClickSpawn(int index)
+	override public void OnClickSpawn(Food obj)
 	{
-		StartBuilding(Spawn(Random.Range(0, m_prefObjs.Length)));
+		StartBuilding(Spawn((int)obj.Type));
 	}
 
 

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
@@ -6,33 +6,33 @@ using UnityEngine.UI;
 public class Statistics : MonoBehaviour {
 
 	[SerializeField]
-	Text	m_antWorkersText;
+	Text	m_antWorkersText = null;
 
 	[SerializeField]
-	Text	m_antSoldiersText;
+	Text	m_antSoldiersText = null;
 
 	[SerializeField]
-	Text	m_foodsText;
+	Text	m_foodsText = null;
 
 
 	// Update is called once per frame
 	void Update () {
-		if (Helper.GetAntSpawningPool().SpawnKeys.ContainsKey(Helper.SpawnObjType.WorkerAnt))
-			m_antWorkersText.text = Helper.GetAntSpawningPool().SpawnKeys[Helper.SpawnObjType.WorkerAnt].Count.ToString();
+		if (Helper.GetColony(Helper.MY_COLONY).AntSpawningPool.SpawnKeys.ContainsKey(SpawnObjType.AntWorker))
+			m_antWorkersText.text = Helper.GetColony(Helper.MY_COLONY).AntSpawningPool.SpawnKeys[SpawnObjType.AntWorker].Count.ToString();
 		else
 			m_antWorkersText.text = "0";
 
-		if (Helper.GetAntSpawningPool().SpawnKeys.ContainsKey(Helper.SpawnObjType.SolderAnt))
-			m_antSoldiersText.text = Helper.GetAntSpawningPool().SpawnKeys[Helper.SpawnObjType.SolderAnt].Count.ToString();
+		if (Helper.GetColony(Helper.MY_COLONY).AntSpawningPool.SpawnKeys.ContainsKey(SpawnObjType.AntSoldier))
+			m_antSoldiersText.text = Helper.GetColony(Helper.MY_COLONY).AntSpawningPool.SpawnKeys[SpawnObjType.AntSoldier].Count.ToString();
 		else
 			m_antSoldiersText.text = "0";
 
-		if (Helper.GetRoomSpawningPool().SpawnKeys.ContainsKey(Helper.SpawnObjType.FoodRoom))
+		if (Helper.GetColony(Helper.MY_COLONY).RoomSpawningPool.SpawnKeys.ContainsKey(SpawnObjType.RoomFood))
 		{
 			int count = 0;
-			foreach(string uid in Helper.GetRoomSpawningPool().SpawnKeys[Helper.SpawnObjType.FoodRoom])
+			foreach(string uid in Helper.GetColony(Helper.MY_COLONY).RoomSpawningPool.SpawnKeys[SpawnObjType.RoomFood])
 			{
-				count += Helper.GetRoomSpawningPool().GetSpawnedObject(uid).CarryHolder.CarryCount;
+				count += Helper.GetColony(Helper.MY_COLONY).RoomSpawningPool.GetSpawnedObject(uid).CarryHolder.CarryCount;
 			}
 
 			m_foodsText.text = count.ToString();

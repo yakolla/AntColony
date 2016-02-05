@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 public class EggPeace : CarryAble {
@@ -27,11 +27,12 @@ public class EggPeace : CarryAble {
 
 	override public void OnKill()
 	{
-		Ant ant = Helper.GetAntSpawningPool().Spawn(Helper.GetAntSpawningPool().RandomPrefIndexToHatch());
+
+		Ant ant = Helper.GetColony(m_colony).AntSpawningPool.Spawn(Helper.GetColony(m_colony).AntSpawningPool.RandomSpawnType(SpawnObjType.AntWorker));
 		if (ant != null)
 		{
 			ant.transform.position = m_holder.Onwer.transform.position;
-			Helper.GetAntSpawningPool().StartBuilding(ant);
+			Helper.GetColony(m_colony).AntSpawningPool.StartBuilding(ant);
 		}
 
 		base.OnKill();

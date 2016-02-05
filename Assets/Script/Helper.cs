@@ -2,6 +2,20 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+public enum SpawnObjType
+{
+	AntQueen,
+	AntWorker,
+	AntSoldier,
+	NaturalEnemy,
+	Food,
+	RoomQueen,
+	RoomFood,
+	RoomEgg,
+	Egg,
+	Count
+}
+
 public class Helper 
 {
 	public const int CLOSE_TILE = 0;
@@ -12,19 +26,9 @@ public class Helper
 	public const int HILL_TILE = 5;
 	public const int ONE_PEACE_SIZE = 16;
 
-	public enum SpawnObjType
-	{
-		QueenAnt,
-		WorkerAnt,
-		SolderAnt,
-		NaturalEnemy,
-		Food,
-		QueenRoom,
-		FoodRoom,
-		EggRoom,
-		Egg,
-		Count
-	}
+
+	public const int MY_COLONY=0;
+	public const int NATURAL_ENEMY_COLONY=10;
 
 	public class DuplicateKeyComparer<TKey>
 		:
@@ -49,53 +53,20 @@ public class Helper
 	public static Background GetBackground()
 	{
 		if (_background == null)
-			_background = GameObject.Find("GameObjects").GetComponentInChildren<Background>();
+			_background = GameObject.Find("Background").GetComponent<Background>();
 
 		return _background;
 
 	}
 
-	static RoomSpawningPool	_roomSpawningPool = null;
-	public static RoomSpawningPool GetRoomSpawningPool()
+	static Dictionary<int, Colony>	_colnoys = new Dictionary<int, Colony>();
+	public static Colony	GetColony(int colony)
 	{
-		if (_roomSpawningPool == null)
-			_roomSpawningPool = GameObject.Find("GameObjects").GetComponentInChildren<RoomSpawningPool>();
-		
-		return _roomSpawningPool;
-		
+		if (_colnoys.ContainsKey(colony) == false)
+			_colnoys.Add(colony, GameObject.Find("Colonys/Colony"+colony).GetComponent<Colony>());
+
+		return _colnoys[colony];
 	}
-
-	static NaturalEnemySpawningPool	_naturalEnemySpawningPool = null;
-	public static NaturalEnemySpawningPool GetNaturalEnemySpawningPool()
-	{
-		if (_naturalEnemySpawningPool == null)
-			_naturalEnemySpawningPool = GameObject.Find("GameObjects").GetComponentInChildren<NaturalEnemySpawningPool>();
-		
-		return _naturalEnemySpawningPool;
-		
-	}
-
-	static AntSpawningPool	_antSpawningPool = null;
-	public static AntSpawningPool GetAntSpawningPool()
-	{
-		if (_antSpawningPool == null)
-			_antSpawningPool = GameObject.Find("GameObjects").GetComponentInChildren<AntSpawningPool>();
-		
-		return _antSpawningPool;
-		
-	}
-
-	static FoodSpawningPool	_foodSpawningPool = null;
-	public static FoodSpawningPool GetFoodSpawningPool()
-	{
-		if (_foodSpawningPool == null)
-			_foodSpawningPool = GameObject.Find("GameObjects").GetComponentInChildren<FoodSpawningPool>();
-		
-		return _foodSpawningPool;
-		
-	}
-
-
 
 	public static void CheckTouched(System.Action<int, Vector3[]> callback)
 	{

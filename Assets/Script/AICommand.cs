@@ -17,7 +17,6 @@ public class AICommand {
 	AICommandType	m_type;
 	int		m_priority = 1;
 	string	m_uid;
-	Vector3	m_pos;
 
 	public AICommand(AICommandType type, string uid)
 	{
@@ -31,10 +30,7 @@ public class AICommand {
 		get {return m_type;}
 	}
 
-	public Vector3	Position
-	{
-		get { return m_pos; }
-	}
+
 
 	public int Priority
 	{

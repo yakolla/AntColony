@@ -9,7 +9,7 @@ public class RoomSpawningPool : SpawningPool<Room> {
 	[SerializeField]
 	bool	m_auto = false;
 
-	override public void OnClickSpawn(int index)
+	override public void OnClickSpawn(Room obj)
 	{
 		if (m_prepare != null)
 		{
@@ -18,22 +18,26 @@ public class RoomSpawningPool : SpawningPool<Room> {
 			return;
 		}
 
-		m_prepare = Spawn(index);
+		m_prepare = Spawn((int)obj.Type);
 	}
 
 	override public void StartBuilding(Room room)
 	{
 		base.StartBuilding(room);
 
-		if (room.Type == Helper.SpawnObjType.QueenRoom)
-			Helper.GetBackground().AICommandQueue(Helper.SpawnObjType.QueenAnt).PushCommand(new AICommand(AICommandType.GEN_ROOM, room.UID));
+		if (room.Type == SpawnObjType.RoomQueen)
+			Helper.GetColony(Colony).AICommandQueue(SpawnObjType.AntQueen).PushCommand(new AICommand(AICommandType.GEN_ROOM, room.UID));
 		else		
-			Helper.GetBackground().AICommandQueue(Helper.SpawnObjType.WorkerAnt).PushCommand(new AICommand(AICommandType.GEN_ROOM, room.UID));
+			Helper.GetColony(Colony).AICommandQueue(SpawnObjType.AntWorker).PushCommand(new AICommand(AICommandType.GEN_ROOM, room.UID));
 	}
 
 	void Awake()
 	{
 		m_topPannel = GameObject.Find("HudGUI/Canvas/TopPanel").GetComponent<RectTransform>();
+	}
+
+	void Start()
+	{
 		if (m_auto == true)
 		{
 			StartCoroutine(LoopAutoSpawnRoom());
@@ -44,23 +48,23 @@ public class RoomSpawningPool : SpawningPool<Room> {
 	{
 		while(true)
 		{
-			if (Helper.GetAntSpawningPool().SpawnKeys.ContainsKey(Helper.SpawnObjType.WorkerAnt))
+			if (Helper.GetColony(Colony).AntSpawningPool.SpawnKeys.ContainsKey(SpawnObjType.AntWorker))
 			{
 				int foodRoomCount = 0;
-				if (Helper.GetRoomSpawningPool().SpawnKeys.ContainsKey(Helper.SpawnObjType.FoodRoom))
-					foodRoomCount = Helper.GetRoomSpawningPool().SpawnKeys[Helper.SpawnObjType.FoodRoom].Count;
+				if (SpawnKeys.ContainsKey(SpawnObjType.RoomFood))
+					foodRoomCount = SpawnKeys[SpawnObjType.RoomFood].Count;
 
-				if (foodRoomCount <= Helper.GetAntSpawningPool().SpawnKeys[Helper.SpawnObjType.WorkerAnt].Count/5)
+				if (foodRoomCount <= Helper.GetColony(Colony).AntSpawningPool.SpawnKeys[SpawnObjType.AntWorker].Count/5)
 				{
-					string queenRoomUID = Helper.GetRoomSpawningPool().SpawnKeys[Helper.SpawnObjType.QueenRoom][0];
-					Room queenRoom = Helper.GetRoomSpawningPool().GetSpawnedObject(queenRoomUID);
+					string queenRoomUID = SpawnKeys[SpawnObjType.RoomQueen][0];
+					Room queenRoom = GetSpawnedObject(queenRoomUID);
 					float radian = Random.Range(0, Mathf.PI*2);
 
-					Room room = Helper.GetRoomSpawningPool().Spawn(1);
+					Room room = Spawn((int)SpawnObjType.RoomFood);
 					Point pt = Point.ToPoint(new Vector3(queenRoom.transform.position.x + Mathf.Cos(radian) * 3, queenRoom.transform.position.y + Mathf.Sin(radian) * 3, 0));
 
 					room.transform.position = Point.ToVector(pt);
-					Helper.GetRoomSpawningPool().StartBuilding(room);
+					StartBuilding(room);
 
 				}
 			}

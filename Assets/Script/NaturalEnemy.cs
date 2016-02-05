@@ -9,10 +9,10 @@ public class NaturalEnemy : Ant {
 		Helper.GetBackground().SetPixel(st.x, st.y, Helper.NATURAL_ENEMY_TILE);	
 	}
 
-	void Update()
+	new void Update()
 	{
 		if (HP <= 0)
-			Helper.GetNaturalEnemySpawningPool().Kill(this);
+			Helper.GetColony(Colony).NaturalEnemySpawningPool.Kill(this);
 	}
 
 	override public void OnReachToGoal(SpawnBaseObj target)

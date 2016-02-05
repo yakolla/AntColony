@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 public class Food : SpawnBaseObj {
@@ -26,7 +26,7 @@ public class Food : SpawnBaseObj {
 		while(HP > 0)
 		{
 			AICommand cmd = new AICommand(AICommandType.GEN_FOOD, UID);
-			Helper.GetBackground().AICommandQueue(Helper.SpawnObjType.WorkerAnt).PushCommand(cmd);
+			Helper.GetColony(Colony).AICommandQueue(SpawnObjType.AntWorker).PushCommand(cmd);
 			yield return new WaitForSeconds(0.5f);
 		}
 	}
@@ -46,7 +46,7 @@ public class Food : SpawnBaseObj {
 		FoodPeace peace = new FoodPeace();
 		peace.Start(tex);
 		if (0 == HP)
-			Helper.GetFoodSpawningPool().Kill(this);
+			Helper.GetColony(Colony).FoodSpawningPool.Kill(this);
 
 		return peace;
 	}

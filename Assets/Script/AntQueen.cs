@@ -6,18 +6,16 @@ public class AntQueen : Ant {
 	[SerializeField]
 	float		m_genEggTime = 1f;
 
-	bool		m_eggable = false;
-
 	float		m_eggElapsedTime = 0f;
 
 	RoomQueen	m_roomQueen = null;
 
 	[SerializeField]
-	Sprite 		m_eggSprite;
+	Sprite 		m_eggSprite = null;
 
 
 	// Update is called once per frame
-	void Update () 
+	new void Update () 
 	{
 		base.Update();
 
@@ -34,7 +32,7 @@ public class AntQueen : Ant {
 			egg.Start(m_eggSprite.texture);
 
 			AICommand cmd = new AICommand(AICommandType.GEN_EGG, m_roomQueen.UID);
-			Helper.GetBackground().AICommandQueue(Helper.SpawnObjType.WorkerAnt).PushCommand(cmd);
+			Helper.GetColony(Colony).AICommandQueue(SpawnObjType.AntWorker).PushCommand(cmd);
 
 			m_roomQueen.CarryHolder.PutOn(egg);
 		}
@@ -53,7 +51,7 @@ public class AntQueen : Ant {
 
 		if (gotoRoomQueen == true)
 		{
-			SpawnBaseObj target = SelectRandomRoom( Helper.SpawnObjType.QueenRoom, false );
+			SpawnBaseObj target = SelectRandomRoom( SpawnObjType.RoomQueen, false );
 			m_navigator.GoTo(target, false);
 		}
 	}
@@ -64,12 +62,12 @@ public class AntQueen : Ant {
 
 		if (target != null)
 		{
-			Helper.SpawnObjType type = target.Type;
+			SpawnObjType type = target.Type;
 			
 			switch(type)
 			{
 			
-			case Helper.SpawnObjType.QueenRoom:
+			case SpawnObjType.RoomQueen:
 				m_roomQueen = target as RoomQueen;
 				break;
 			}

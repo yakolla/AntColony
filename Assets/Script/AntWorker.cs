@@ -8,7 +8,7 @@ public class AntWorker : Ant {
 
 	
 	// Update is called once per frame
-	void Update () 
+	new void Update () 
 	{
 		base.Update();
 	}
@@ -24,34 +24,34 @@ public class AntWorker : Ant {
 
 		if (target != null)
 		{
-			Helper.SpawnObjType type = target.Type;
+			SpawnObjType type = target.Type;
 
 
 			switch(type)
 			{
-			case Helper.SpawnObjType.FoodRoom:
+			case SpawnObjType.RoomFood:
 				RoomFood roomFood = target.GetComponent<RoomFood>();
 				if (m_carryHolder.CarryCount > 0)
 					roomFood.CarryHolder.PutOn(m_carryHolder.Takeout());
 				target = null;
 				break;
-			case Helper.SpawnObjType.EggRoom:
+			case SpawnObjType.RoomEgg:
 				RoomEgg roomEgg = target.GetComponent<RoomEgg>();
 				if (m_carryHolder.CarryCount > 0)
 					roomEgg.CarryHolder.PutOn(m_carryHolder.Takeout());
 				target = null;
 				break;
-			case Helper.SpawnObjType.Food:
+			case SpawnObjType.Food:
 				Food food = target.GetComponent<Food>();
-				target = SelectRandomRoom(Helper.SpawnObjType.FoodRoom, false);
+				target = SelectRandomRoom(SpawnObjType.RoomFood, false);
 				if (target != null)
 					m_carryHolder.PutOn(food.Slice());
 				break;
-			case Helper.SpawnObjType.QueenRoom:
+			case SpawnObjType.RoomQueen:
 				RoomQueen roomQueen = target.GetComponent<RoomQueen>();
 				if (roomQueen.CarryHolder.CarryCount > 0)
 				{
-					target = SelectRandomRoom(Helper.SpawnObjType.EggRoom, false);
+					target = SelectRandomRoom(SpawnObjType.RoomEgg, false);
 					if (target != null)
 						m_carryHolder.PutOn(roomQueen.CarryHolder.Takeout());
 

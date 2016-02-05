@@ -1,29 +1,64 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+
+[System.Serializable]
+public class SpawnRatio
+{
+	public SpawnObjType m_spawnType;
+	public int m_ratio;
+}
+
 public class SpawningPool<T>  : MonoBehaviour where T : SpawnBaseObj  {
 
-	Dictionary<Helper.SpawnObjType, List<string> >	m_keys = new Dictionary<Helper.SpawnObjType, List<string> >();
-	List<Helper.SpawnObjType>		m_types = new List<Helper.SpawnObjType>();
+	Dictionary<SpawnObjType, List<string> >	m_keys = new Dictionary<SpawnObjType, List<string> >();
+	List<SpawnObjType>		m_types = new List<SpawnObjType>();
 	Dictionary<string, T>	m_objs = new Dictionary<string, T>();
 
-	[SerializeField]
-	protected GameObject []	m_prefObjs;
+	protected GameObject []	m_prefObjs = new GameObject[(int)SpawnObjType.Count];
 
 	[SerializeField]
 	int	m_maxSpawnCount = 0;
 
-	virtual public void OnClickSpawn(int index){}
+	[SerializeField]
+	int m_colony = 0;
+
+
+	
+	[SerializeField]
+	SpawnRatio[]		m_spawnRatios = null;
+	
+	int			m_maxRatio;
+
+	virtual public void OnClickSpawn(T obj){}
+
+	void Awake()
+	{
+		for(int i = 0 ; i < m_spawnRatios.Length; ++i)
+		{
+			int ratio = m_spawnRatios[i].m_ratio;
+			m_spawnRatios[i].m_ratio += m_maxRatio;
+			m_maxRatio += ratio;
+		}
+	}
 
 	public T Spawn(int index)
 	{		
 		if (m_maxSpawnCount > 0 && m_objs.Count >= m_maxSpawnCount)
 			return null;
 
+		SpawnObjType spawnType = (SpawnObjType)index;
+
+		if (m_prefObjs[index] == null)
+			m_prefObjs[index] = Resources.Load("Pref/"+spawnType.ToString()) as GameObject;
+
+
 		GameObject obj = Instantiate(m_prefObjs[index]) as GameObject;
 		obj.name = m_prefObjs[index].name;
-		obj.GetComponent<T>().UID = System.Guid.NewGuid().ToString();
-		return obj.GetComponent<T>();
+		T spawnObj = obj.GetComponent<T>();
+		spawnObj.UID = System.Guid.NewGuid().ToString();
+		spawnObj.Colony = Colony;
+		return spawnObj;
 	}
 
 	virtual public void StartBuilding(T spawned)
@@ -59,13 +94,45 @@ public class SpawningPool<T>  : MonoBehaviour where T : SpawnBaseObj  {
 		GameObject.DestroyObject(spawned.gameObject);
 	}
 
-	public Dictionary<Helper.SpawnObjType, List<string> > SpawnKeys
+	public void Clear()
+	{
+		List<string> uids = new List<string>(m_objs.Keys);
+		foreach(string uid in uids)
+		{
+			Kill(GetSpawnedObject(uid));
+		}
+
+		m_keys.Clear();
+		m_types.Clear();
+		m_objs.Clear();
+	}
+
+	public int RandomSpawnType(SpawnObjType defaultSpawnType)
+	{
+		int random = Random.Range(1, m_maxRatio);
+		for(int i = 0 ; i < m_spawnRatios.Length; ++i)
+		{
+			if (random < m_spawnRatios[i].m_ratio)
+			{
+				return (int)m_spawnRatios[i].m_spawnType;
+			}
+		}
+		
+		return (int)defaultSpawnType;
+	}
+
+	public Dictionary<SpawnObjType, List<string> > SpawnKeys
 	{
 		get {return m_keys;}
 	}
 
-	public List<Helper.SpawnObjType> Types
+	public List<SpawnObjType> Types
 	{
 		get {return m_types;}
+	}
+
+	public int Colony
+	{
+		get {return m_colony;}
 	}
 }

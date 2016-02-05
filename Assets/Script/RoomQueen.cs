@@ -7,8 +7,8 @@ public class RoomQueen : Room {
 	{
 		base.StartBuilding();
 
-		Ant ant = Helper.GetAntSpawningPool().Spawn((int)Helper.SpawnObjType.QueenAnt);
-		Helper.GetAntSpawningPool().StartBuilding(ant);
+		Ant ant = Helper.GetColony(Colony).AntSpawningPool.Spawn((int)SpawnObjType.AntQueen);
+		Helper.GetColony(Colony).AntSpawningPool.StartBuilding(ant);
 
 	}
 
