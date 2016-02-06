@@ -51,7 +51,7 @@ public class AntQueen : Ant {
 
 		if (gotoRoomQueen == true)
 		{
-			SpawnBaseObj target = SelectRandomRoom( SpawnObjType.RoomQueen, false );
+			SpawnBaseObj target = Helper.GetColony(Colony).SelectRandomRoom( SpawnObjType.RoomQueen, false );
 			m_navigator.GoTo(target, false);
 		}
 	}

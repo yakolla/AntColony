@@ -61,7 +61,7 @@ public class SpawningPool<T>  : MonoBehaviour where T : SpawnBaseObj  {
 		return spawnObj;
 	}
 
-	virtual public void StartBuilding(T spawned)
+	virtual public void StartBuilding(T spawned, Vector3 pos)
 	{
 		if (spawned == null)
 			return;
@@ -75,6 +75,7 @@ public class SpawningPool<T>  : MonoBehaviour where T : SpawnBaseObj  {
 		m_objs.Add(spawned.UID, spawned);
 		m_keys[spawned.Type].Add(spawned.UID);
 		spawned.transform.parent = transform;
+		spawned.transform.position = pos;
 		spawned.StartBuilding();
 	}
 

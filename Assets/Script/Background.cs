@@ -20,9 +20,6 @@ public class Background : MonoBehaviour {
 	Dictionary<int, int>	m_openTiles = new Dictionary<int, int>();
 
 
-
-	Vector3[]		m_randomGround = new Vector3[3];
-
 	// Use this for initialization
 	void Awake () {
 		Application.runInBackground = true;
@@ -36,9 +33,7 @@ public class Background : MonoBehaviour {
 		SpriteRenderer renderer = transform.Find("Body").GetComponent<SpriteRenderer>();
 		m_tiledMap.Init(renderer, m_color);
 
-		m_randomGround[0] = Vector3.zero;
-		m_randomGround[1] = new Vector3(m_tiledMap.GetWidth()/2, 0, 0);
-		m_randomGround[2] = new Vector3(m_tiledMap.GetWidth()-1, 0, 0);
+
 
 	}
 
@@ -151,12 +146,5 @@ public class Background : MonoBehaviour {
 	public Point getPoint(int nodeID)
 	{
 		return m_tiledMap.getPoint(nodeID);
-	}
-
-
-
-	public Vector3	GetRandomGround()
-	{
-		return m_randomGround[Random.Range(0, m_randomGround.Length)];
 	}
 }

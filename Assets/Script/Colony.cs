@@ -15,6 +15,8 @@ public class Colony  : MonoBehaviour{
 
 	AICommandQueue[]	m_antAICommandQueue = new AICommandQueue[(int)SpawnObjType.Count];
 
+	[SerializeField]
+	Vector3[]		m_randomGround;
 	// Use this for initialization
 	public void Awake () {
 		m_roomSpawningPool = transform.Find("Rooms").GetComponent<RoomSpawningPool>();
@@ -64,7 +66,7 @@ public class Colony  : MonoBehaviour{
 			SpawnObjType type = JsonConvert.DeserializeObject<SpawnObjType>(reader.ReadLine());
 			Room room = m_roomSpawningPool.Spawn((int)type);
 			room.Deserialize(reader);
-			m_roomSpawningPool.StartBuilding(room);
+			m_roomSpawningPool.StartBuilding(room, room.transform.position);
 		}
 
 		reader.Close();
@@ -95,4 +97,39 @@ public class Colony  : MonoBehaviour{
 	{
 		return m_antAICommandQueue[(int)type];
 	}
+
+	public Vector3	GetRandomGround()
+	{
+		return m_randomGround[Random.Range(0, m_randomGround.Length)];
+	}
+
+	public Room SelectRandomRoom(bool digy)
+	{
+		int roomTypeCount = RoomSpawningPool.Types.Count;
+		if (roomTypeCount == 0)
+			return null;
+		
+		SpawnObjType randType = RoomSpawningPool.Types[Random.Range(0, roomTypeCount)];
+		return SelectRandomRoom(randType, digy);
+		
+	}
+	
+	public Room SelectRandomRoom(SpawnObjType type, bool digy)
+	{
+		if (false == RoomSpawningPool.Types.Contains(type))
+			return null;
+		
+		int roomCount = RoomSpawningPool.SpawnKeys[type].Count;
+		if (roomCount == 0)
+			return null;
+		
+		string randKey = RoomSpawningPool.SpawnKeys[type][Random.Range(0, roomCount)];
+		
+		Room room = RoomSpawningPool.GetSpawnedObject(randKey).GetComponent<Room>();
+		if (digy == false && room.HasPath == false)
+			return null;
+		
+		return room;
+	}
+
 }

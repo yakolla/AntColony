@@ -31,8 +31,7 @@ public class EggPeace : CarryAble {
 		Ant ant = Helper.GetColony(m_colony).AntSpawningPool.Spawn(Helper.GetColony(m_colony).AntSpawningPool.RandomSpawnType(SpawnObjType.AntWorker));
 		if (ant != null)
 		{
-			ant.transform.position = m_holder.Onwer.transform.position;
-			Helper.GetColony(m_colony).AntSpawningPool.StartBuilding(ant);
+			Helper.GetColony(m_colony).AntSpawningPool.StartBuilding(ant, m_holder.Onwer.transform.position);
 		}
 
 		base.OnKill();

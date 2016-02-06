@@ -5,7 +5,7 @@ public class NaturalEnemySpawningPool : SpawningPool<NaturalEnemy> {
 
 	override public void OnClickSpawn(NaturalEnemy obj)
 	{
-		StartBuilding(Spawn((int)SpawnObjType.NaturalEnemy));
+		StartBuilding(Spawn((int)SpawnObjType.NaturalEnemy), Helper.GetColony(Colony).GetRandomGround());
 	}
 
 }

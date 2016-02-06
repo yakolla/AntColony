@@ -28,6 +28,12 @@ public class Ant : SpawnBaseObj {
 
 	}
 
+	override public void StartBuilding()
+	{
+		Point st = Point.ToPoint(transform.position);
+		m_navigator.GoTo(transform.position, true);
+	}
+
 	IEnumerator LoopHenger()
 	{
 		while (m_hunger > 0)
@@ -43,46 +49,18 @@ public class Ant : SpawnBaseObj {
 			Helper.GetColony(Colony).AntSpawningPool.Kill(this);
 	}
 
-	protected Room SelectRandomRoom(bool digy)
-	{
-		int roomTypeCount = Helper.GetColony(Colony).RoomSpawningPool.Types.Count;
-		if (roomTypeCount == 0)
-			return null;
-
-		SpawnObjType randType = Helper.GetColony(Colony).RoomSpawningPool.Types[Random.Range(0, roomTypeCount)];
-		return SelectRandomRoom(randType, digy);
-	
-	}
-
-	protected Room SelectRandomRoom(SpawnObjType type, bool digy)
-	{
-		if (false == Helper.GetColony(Colony).RoomSpawningPool.Types.Contains(type))
-			return null;
-
-		int roomCount = Helper.GetColony(Colony).RoomSpawningPool.SpawnKeys[type].Count;
-		if (roomCount == 0)
-			return null;
-
-		string randKey = Helper.GetColony(Colony).RoomSpawningPool.SpawnKeys[type][Random.Range(0, roomCount)];
-
-		Room room = Helper.GetColony(Colony).RoomSpawningPool.GetSpawnedObject(randKey).GetComponent<Room>();
-		if (digy == false && room.HasPath == false)
-			return null;
-
-		return room;
-	}
 
 	virtual public void DoDefaultAI()
 	{
 
 		if (Random.Range(0, 2) == 0)			
 		{
-			m_navigator.GoTo(Helper.GetBackground().GetRandomGround(), false);
+			m_navigator.GoTo(Helper.GetColony(Colony).GetRandomGround(), false);
 		}
 		else
 		{
 			bool digy = true;
-			SpawnBaseObj target = SelectRandomRoom(digy = m_navigator.Digy);
+			SpawnBaseObj target = Helper.GetColony(Colony).SelectRandomRoom(digy = m_navigator.Digy);
 			m_navigator.GoTo(target, digy);
 		}
 
@@ -95,7 +73,7 @@ public class Ant : SpawnBaseObj {
 
 		if (m_hunger < 60)
 		{
-			Room room = SelectRandomRoom(SpawnObjType.RoomFood, false);
+			Room room = Helper.GetColony(Colony).SelectRandomRoom(SpawnObjType.RoomFood, false);
 			if (room != null)
 				m_cmd = new AICommand(AICommandType.EAT_FOOD, room.UID );
 			else

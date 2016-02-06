@@ -3,10 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 public class NaturalEnemy : Ant {
 
+	Colony[]	m_colonys;
+
 	override public void StartBuilding()
 	{
-		Point st = Point.ToPoint(transform.position);
-		Helper.GetBackground().SetPixel(st.x, st.y, Helper.NATURAL_ENEMY_TILE);	
+		base.StartBuilding();
+
+		m_colonys = GameObject.Find("Colonys").GetComponentsInChildren<Colony>();
 	}
 
 	new void Update()
@@ -19,7 +22,7 @@ public class NaturalEnemy : Ant {
 	{
 		base.OnReachToGoal(target);
 
-		m_navigator.GoTo(SelectRandomRoom(false), false);
+		m_navigator.GoTo(m_colonys[Random.Range(0, m_colonys.Length)].SelectRandomRoom(false), false);
 	}
 
 }

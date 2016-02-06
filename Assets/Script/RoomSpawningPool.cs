@@ -13,7 +13,7 @@ public class RoomSpawningPool : SpawningPool<Room> {
 	{
 		if (m_prepare != null)
 		{
-			StartBuilding(m_prepare);
+			StartBuilding(m_prepare, m_prepare.transform.position);
 			m_prepare = null;
 			return;
 		}
@@ -21,9 +21,9 @@ public class RoomSpawningPool : SpawningPool<Room> {
 		m_prepare = Spawn((int)obj.Type);
 	}
 
-	override public void StartBuilding(Room room)
+	override public void StartBuilding(Room room, Vector3 pos)
 	{
-		base.StartBuilding(room);
+		base.StartBuilding(room, pos);
 
 		if (room.Type == SpawnObjType.RoomQueen)
 			Helper.GetColony(Colony).AICommandQueue(SpawnObjType.AntQueen).PushCommand(new AICommand(AICommandType.GEN_ROOM, room.UID));
@@ -63,8 +63,7 @@ public class RoomSpawningPool : SpawningPool<Room> {
 					Room room = Spawn((int)SpawnObjType.RoomFood);
 					Point pt = Point.ToPoint(new Vector3(queenRoom.transform.position.x + Mathf.Cos(radian) * 3, queenRoom.transform.position.y + Mathf.Sin(radian) * 3, 0));
 
-					room.transform.position = Point.ToVector(pt);
-					StartBuilding(room);
+					StartBuilding(room, Point.ToVector(pt));
 
 				}
 			}
