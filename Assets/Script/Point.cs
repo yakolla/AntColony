@@ -36,4 +36,11 @@ public struct Point {
 		int dy = d.y-s.y;
 		return dx*dx + dy*dy;
 	}
+
+	public static int Distance(Point s, Point d)
+	{
+		int dx = d.x-s.x;
+		int dy = d.y-s.y;
+		return dx*dx + dy*dy;
+	}
 }

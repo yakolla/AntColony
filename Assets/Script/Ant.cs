@@ -31,7 +31,7 @@ public class Ant : SpawnBaseObj {
 	override public void StartBuilding()
 	{
 		Point st = Point.ToPoint(transform.position);
-		m_navigator.GoTo(transform.position, true);
+		m_navigator.GoTo(transform.position, m_navigator.Digy);
 	}
 
 	IEnumerator LoopHenger()
