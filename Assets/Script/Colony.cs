@@ -16,7 +16,7 @@ public class Colony  : MonoBehaviour{
 	AICommandQueue[]	m_antAICommandQueue = new AICommandQueue[(int)SpawnObjType.Count];
 
 	[SerializeField]
-	Vector3[]		m_randomGround;
+	Rect		m_area;
 	// Use this for initialization
 	public void Awake () {
 		m_roomSpawningPool = transform.Find("Rooms").GetComponent<RoomSpawningPool>();
@@ -100,7 +100,12 @@ public class Colony  : MonoBehaviour{
 
 	public Vector3	GetRandomGround()
 	{
-		return m_randomGround[Random.Range(0, m_randomGround.Length)];
+		return new Vector3(Random.Range(m_area.x, m_area.x+m_area.width), 0, 0);
+	}
+
+	public Rect Area
+	{
+		get {return m_area;}
 	}
 
 	public Room SelectRandomRoom(bool digy)

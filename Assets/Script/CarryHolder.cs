@@ -30,7 +30,7 @@ public class CarryHolder {
 			colors[i] = new Color32(255, 255, 255, 0);
 
 		m_carryHolder.sprite = Sprite.Create(m_modifiedTexture2D.Init(aa), new Rect(0, 0, m_width, m_height), new Vector2(0.5f, 0.5f));
-		m_modifiedTexture2D.SetPixels32ByIndex(0, m_cols, m_width, m_height, 0, colors);
+		m_modifiedTexture2D.SetPixels32ByIndex(0, m_cols, m_width, m_height, colors);
 		m_modifiedTexture2D.Update();
 	}
 
@@ -44,7 +44,7 @@ public class CarryHolder {
 			return;
 
 		carry.SetCarryHolder(this);
-		m_modifiedTexture2D.SetPixels32ByIndex(m_carryCount, m_cols, Helper.ONE_PEACE_SIZE, Helper.ONE_PEACE_SIZE, 0, carry.Img.GetPixels32());
+		m_modifiedTexture2D.SetPixels32ByIndex(m_carryCount, m_cols, Helper.ONE_PEACE_SIZE, Helper.ONE_PEACE_SIZE, carry.Img.GetPixels32());
 		m_modifiedTexture2D.Update();
 		++m_carryCount;
 		m_carryAbles.Add(carry);
@@ -61,7 +61,7 @@ public class CarryHolder {
 		m_carryAbles.RemoveAt(0);
 
 		--m_carryCount;
-		Texture2D tex = m_modifiedTexture2D.SliceByIndex(m_carryCount, m_cols, m_width/m_cols, m_height/m_rows, 0);
+		Texture2D tex = m_modifiedTexture2D.SliceByIndex(m_carryCount, m_cols, m_width/m_cols, m_height/m_rows);
 		m_modifiedTexture2D.Update();
 
 		return carry;

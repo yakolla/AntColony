@@ -34,7 +34,10 @@ public class Background : MonoBehaviour {
 		m_tiledMap.Init(renderer, m_color);
 
 
-
+		for (int x = 0; x < m_tiledMap.GetWidth(); ++x)
+		{
+			SetPixel(x, 0, TiledMap.Type.OPEN_TILE);
+		}
 	}
 
 	void Start()
@@ -58,7 +61,7 @@ public class Background : MonoBehaviour {
 				{
 					deletedTile.Add(key);
 					Point pt = getPoint(key);
-					SetPixel(pt.x, pt.y, 0);
+					SetPixel(pt.x, pt.y, TiledMap.Type.CLOSE_TILE);
 				}
 				
 			}
@@ -107,26 +110,31 @@ public class Background : MonoBehaviour {
 		});
 	}
 
-	public void SetPixel(int x, int y, byte value)
+	public void SetPixel(int x, int y, TiledMap.Type value)
 	{
 		m_tiledMap.SetPixel(x, y, value);
 
-		if (Helper.OPEN_TILE == value)
+		if (TiledMap.Type.OPEN_TILE == value)
 		{
-			if (m_openTiles.ContainsKey(getNodeID(x,y)) == false)
-				m_openTiles.Add(getNodeID(x,y), m_maxFadingTime);
-			else
-				m_openTiles[getNodeID(x,y)] = m_maxFadingTime;
+			if (0 < y)
+			{
+				int nodeID = getNodeID(x,y);
+				if (m_openTiles.ContainsKey(nodeID) == false)
+					m_openTiles.Add(nodeID, m_maxFadingTime);
+				else
+					m_openTiles[nodeID] = m_maxFadingTime;
+			}
 		}
 
 	}
 
-	public void SetPixel(Vector3 pos, byte value)
+	public void SetPixel(Vector3 pos, TiledMap.Type value)
 	{
-		m_tiledMap.SetPixel(pos, value);
+		Point pt = Point.ToPoint(pos);
+		SetPixel(pt.x, pt.y, value);
 	}
 
-	public byte[,] Tiles
+	public TiledMap.Type[,] Tiles
 	{
 		get {
 			return m_tiledMap.Tiles;

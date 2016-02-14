@@ -42,7 +42,7 @@ public class Food : SpawnBaseObj {
 		int index = (MaxHP-HP);
 		--HP;
 
-		tex = m_modifiedTexture.SliceByIndex(index, m_modifiedTexture.Width/Helper.ONE_PEACE_SIZE, Helper.ONE_PEACE_SIZE, Helper.ONE_PEACE_SIZE, 0);
+		tex = m_modifiedTexture.SliceByIndex(index, m_modifiedTexture.Width/Helper.ONE_PEACE_SIZE, Helper.ONE_PEACE_SIZE, Helper.ONE_PEACE_SIZE);
 		FoodPeace peace = new FoodPeace();
 		peace.Start(tex);
 		if (0 == HP)

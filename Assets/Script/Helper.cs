@@ -18,12 +18,7 @@ public enum SpawnObjType
 
 public class Helper 
 {
-	public const int CLOSE_TILE = 0;
-	public const int OPEN_TILE = 1;
-	public const int ROOM_TILE = 2;
-	public const int FOOD_TILE = 3;
-	public const int NATURAL_ENEMY_TILE = 4;
-	public const int HILL_TILE = 5;
+
 	public const int ONE_PEACE_SIZE = 16;
 
 

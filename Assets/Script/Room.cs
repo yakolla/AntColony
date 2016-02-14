@@ -41,7 +41,7 @@ public class Room : SpawnBaseObj {
 				//Helper.GetBackground().SetPixel(st.x+x, st.y+y, Helper.ROOM_TILE);
 			}
 		}
-		Helper.GetBackground().SetPixel(st.x, st.y, Helper.OPEN_TILE);
+		Helper.GetBackground().SetPixel(st.x, st.y, TiledMap.Type.OPEN_TILE);
 		HP = MaxHP;
 	}
 

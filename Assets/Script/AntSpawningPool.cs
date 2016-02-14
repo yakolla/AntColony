@@ -13,12 +13,9 @@ public class AntSpawningPool : SpawningPool<Ant> {
 
 	public void OnClickAttack()
 	{
-		if (Helper.GetColony(Colony).NaturalEnemySpawningPool.SpawnKeys[SpawnObjType.NaturalEnemy].Count == 0)
-			return;
-
-		string uid = Helper.GetColony(Colony).NaturalEnemySpawningPool.SpawnKeys[SpawnObjType.NaturalEnemy][0];
-		AICommand cmd = new AICommand(AICommandType.GEN_NATURAL_ENEMY, uid);
-		Helper.GetColony(Colony).AICommandQueue(SpawnObjType.NaturalEnemy).PushCommand(cmd);
+		string uid = Helper.GetColony(1).RoomSpawningPool.SpawnKeys[Helper.GetColony(1).RoomSpawningPool.RandomSpawnType(SpawnObjType.RoomQueen)][0];
+		AICommand cmd = new AICommand(AICommandType.ATTACK, uid);
+		Helper.GetColony(Colony).AICommandQueue(SpawnObjType.AntSoldier).PushCommand(cmd);
 	}
 
 

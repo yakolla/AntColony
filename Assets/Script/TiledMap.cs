@@ -5,8 +5,20 @@ using UnityEngine.UI;
 
 public class TiledMap  {
 
+	public enum Type
+	{
+		CLOSE_TILE = 1,
+		OPEN_TILE,
+		ROOM_TILE,
+		FOOD_TILE,
+		NATURAL_ENEMY_TILE,
+		HILL_TILE,
+		COUNT
+	}
+
 	ModifiedTexture2D	m_modifiedTexture = new ModifiedTexture2D();
-	byte[,] m_tiles;
+	TiledMap.Type[,] m_tiles;
+	bool m_dirty = false;
 
 	Color	m_color;
 
@@ -15,20 +27,20 @@ public class TiledMap  {
 
 		m_color = color;
 		renderer.sprite = Sprite.Create(m_modifiedTexture.Init(renderer.sprite.texture), renderer.sprite.rect, new Vector2(0f, 1f), 10);
-		m_tiles = new byte[m_modifiedTexture.Height, m_modifiedTexture.Width];
+		m_tiles = new TiledMap.Type[m_modifiedTexture.Height, m_modifiedTexture.Width];
 		for(int y = 0; y < m_modifiedTexture.Height; ++y)
 		{
 			for(int x = 0; x < m_modifiedTexture.Width; ++x)
 			{
 				if (80 <= Random.Range(0, 100))
-					SetPixel(x, y, Helper.HILL_TILE);
+					SetPixel(x, y, TiledMap.Type.HILL_TILE);
 				else
-					SetPixel(x, y, Helper.CLOSE_TILE);
+					SetPixel(x, y, TiledMap.Type.CLOSE_TILE);
 			}
 		}
 
 		for(int x = 0; x < m_modifiedTexture.Width; ++x)
-			SetPixel(x, 0, Helper.CLOSE_TILE);
+			SetPixel(x, 0, TiledMap.Type.CLOSE_TILE);
 
 
 	}
@@ -36,44 +48,55 @@ public class TiledMap  {
 	
 	// Update is called once per frame
 	public void Update () {
-		m_modifiedTexture.Update();
+		if (m_dirty == true)
+		{
+			m_modifiedTexture.Update();
+			m_dirty = false;
+		}
+
 	}
 
-	public void SetPixel(int x, int y, byte value)
+	public void SetPixel(int x, int y, TiledMap.Type value)
 	{
+		if (UnableTo(x, y))
+			return;
+
+		if (m_tiles[y, x] == value)
+		{
+			return;
+		}
+
+		m_dirty = true;
 		m_tiles[y, x] = value;
 
 		switch(value)
 		{
-		case Helper.OPEN_TILE:
+		case TiledMap.Type.OPEN_TILE:
 
-			m_modifiedTexture.SetPixel(x, y, value, new Color32(0, 0, 0, 0));
+			m_modifiedTexture.SetPixel(x, y, new Color32(0, 0, 0, 0));
 			break;
-		case Helper.ROOM_TILE:
-			m_modifiedTexture.SetPixel(x, y, value, Color.red);
+		case TiledMap.Type.ROOM_TILE:
+			m_modifiedTexture.SetPixel(x, y, Color.red);
 			break;
-		case Helper.FOOD_TILE:
-			m_modifiedTexture.SetPixel(x, y, value, Color.cyan);
+		case TiledMap.Type.FOOD_TILE:
+			m_modifiedTexture.SetPixel(x, y, Color.cyan);
 			break;
 		//case Helper.BLOCK_TILE:
 		//	m_img.SetPixel(x, m_img.height-y, Color.gray);
 		//	break;
 		default:
-			m_modifiedTexture.SetPixel(x, y, value, m_color);
+			m_modifiedTexture.SetPixel(x, y, m_color);
 			break;
 		}			
 	}
 
-	public void SetPixel(Vector3 pos, byte value)
+	public void SetPixel(Vector3 pos, TiledMap.Type value)
 	{
 		Point cpt = Point.ToPoint(pos);
-		if (UnableTo(cpt.x, cpt.y))
-			return;
-
 		SetPixel(cpt.x, cpt.y, value);
 	}
 
-	public byte[,] Tiles
+	public TiledMap.Type[,] Tiles
 	{
 		get {
 			return m_tiles;

@@ -25,12 +25,12 @@ public class ModifiedTexture2D {
 		m_img.Apply();
 	}
 
-	public void SetPixel(int x, int y, byte value, Color32 color)
+	public void SetPixel(int x, int y, Color32 color)
 	{
 		m_img.SetPixel(x, m_img.height-y-1, color);
 	}
 
-	public void SetPixels32ByIndex(int index, int cols, int blockWidth, int blockHeight, byte value, Color32[] colors)
+	public void SetPixels32ByIndex(int index, int cols, int blockWidth, int blockHeight, Color32[] colors)
 	{
 		for(int yy = 0; yy < blockHeight; ++yy)
 		{
@@ -39,12 +39,12 @@ public class ModifiedTexture2D {
 				int x = ((index%cols)*blockWidth);
 				int y = ((index/cols)*blockWidth);
 
-				SetPixel(xx+x, yy+y, value, colors[(xx+yy*blockWidth)]);
+				SetPixel(xx+x, yy+y, colors[(xx+yy*blockWidth)]);
 			}
 		}
 	}
 
-	public Texture2D Slice(int x, int y, int blockWidth, int blockHeight, byte value)
+	public Texture2D Slice(int x, int y, int blockWidth, int blockHeight)
 	{
 		Color[] colors = m_img.GetPixels(x, (m_img.height-y)-blockHeight, blockWidth, blockHeight);
 		Texture2D tex = new Texture2D(blockWidth, blockHeight);
@@ -55,19 +55,19 @@ public class ModifiedTexture2D {
 		{
 			for(int xx = 0; xx < blockWidth; ++xx)
 			{
-				SetPixel(x+xx, y+yy, value, new Color32(255,255,255,0));
+				SetPixel(x+xx, y+yy,  new Color32(255,255,255,0));
 			}
 		}
 
 		return tex;
 	}
 
-	public Texture2D SliceByIndex(int index, int cols, int blockWidth, int blockHeight, byte value)
+	public Texture2D SliceByIndex(int index, int cols, int blockWidth, int blockHeight)
 	{
 		int x = ((index%cols)*blockWidth);
 		int y = ((index/cols)*blockWidth);
 		
-		return Slice(x, y, blockWidth, blockHeight, value);
+		return Slice(x, y, blockWidth, blockHeight);
 	}
 
 

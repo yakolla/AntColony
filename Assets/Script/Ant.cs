@@ -59,16 +59,15 @@ public class Ant : SpawnBaseObj {
 		}
 		else
 		{
-			bool digy = true;
-			SpawnBaseObj target = Helper.GetColony(Colony).SelectRandomRoom(digy = m_navigator.Digy);
-			m_navigator.GoTo(target, digy);
+			SpawnBaseObj target = Helper.GetColony(Colony).SelectRandomRoom(m_navigator.Digy);
+			m_navigator.GoTo(target, m_navigator.Digy);
 		}
 
 	}
 
 	public void ContinueNextAICommand()
 	{
-		bool digy = true;
+
 		SpawnBaseObj target = null;
 
 		if (m_hunger < 60)
@@ -86,6 +85,7 @@ public class Ant : SpawnBaseObj {
 
 		if (m_cmd != null)
 		{
+			bool digy = m_navigator.Digy;
 			switch(m_cmd.CommandType)
 			{
 			case AICommandType.GEN_EGG:
@@ -107,6 +107,10 @@ public class Ant : SpawnBaseObj {
 			case AICommandType.GEN_ROOM:
 				target = Helper.GetColony(Colony).RoomSpawningPool.GetSpawnedObject(m_cmd.UID);
 				digy = true;
+				break;
+			case AICommandType.ATTACK:
+				target = Helper.GetColony(1).RoomSpawningPool.GetSpawnedObject(m_cmd.UID);
+				digy = false;
 				break;
 			}
 

@@ -11,8 +11,8 @@ public class AntNavigator  : MonoBehaviour{
 	float	m_speed = 1f;
 
 	[SerializeField]
+	bool	m_oriDigy = false;
 	bool	m_digy = true;
-	bool	m_oriDigy = true;
 
 	SpawnBaseObj	m_target;
 	System.Action m_callbackReachToGoal;
@@ -28,14 +28,13 @@ public class AntNavigator  : MonoBehaviour{
 	public void Start () {
 		m_background = Helper.GetBackground();
 
-		GoTo(transform.position, m_digy);
-		m_background.SetPixel(transform.position, Helper.OPEN_TILE);
-		m_oriDigy = m_digy;
+		m_background.SetPixel(transform.position, TiledMap.Type.OPEN_TILE);
+
 	}
 
 	public bool Digy
 	{
-		get {return m_digy;}
+		get {return m_oriDigy;}
 	}
 
 	public void GoTo(Vector3 goal, bool digy)
@@ -102,54 +101,22 @@ public class AntNavigator  : MonoBehaviour{
 				else
 				{
 					m_path = searchShortestAStarPath(Point.ToPoint(transform.position), Point.ToPoint(m_goal));
+					if (m_path.Count == 1)
+					{
+						m_closeNode.Clear();
+					}
 					GoTo(m_target, m_oriDigy);
 				}
 			}
 		}
 
 		transform.position = Vector3.MoveTowards(transform.position, m_smallGoal, m_speed*Time.deltaTime);
-		m_background.SetPixel(transform.position, Helper.OPEN_TILE);
+		m_background.SetPixel(transform.position, TiledMap.Type.OPEN_TILE);
 	}
 
 
 
-	void searchShortest(Point cpt, Point gpt)
-	{
 
-		int[] ax = {-1, 0, 1, 0};
-		int[] ay = {0, -1, 0, 1};
-		for(int i = 0; i < 4; ++i)
-		{
-			int yy = cpt.y+ay[i];
-			int xx = cpt.x+ax[i];
-			int nodeID = m_background.getNodeID(xx, yy);
-			if (m_background.UnableTo(xx, yy))
-				continue;
-			if (m_closeNode.Contains(nodeID))
-				continue;
-			if (m_background.Tiles[yy, xx] == Helper.ROOM_TILE)
-				continue;
-			if (m_background.Tiles[yy, xx] != Helper.OPEN_TILE && m_digy == false)
-				continue;
-
-			int dy = gpt.y-yy;
-			int dx = gpt.x-xx;
-			
-			int distance = dy*dy + dx*dx;
-
-
-			if (m_background.Tiles[yy, xx] == Helper.CLOSE_TILE)
-				distance += (int)(distance*0.2F);
-			else if (m_background.Tiles[yy, xx] == Helper.HILL_TILE)
-				distance += (int)(distance*0.5F);
-
-			m_shortestNode.Add(distance, nodeID);
-
-			if (m_digy == false)
-				break;
-		}
-
-	}
 
 	struct PathNode
 	{
@@ -173,7 +140,7 @@ public class AntNavigator  : MonoBehaviour{
 		m_shortestNode.Add(0, m_background.getNodeID(cpt.x, cpt.y));
 		int prevNodeID = m_shortestNode.Values[0];
 		int lastNodeID = prevNodeID;
-		while(0 < m_shortestNode.Count && m_shortestNode.Count < 30)
+		while(0 < m_shortestNode.Count && pathNodes.Count < 10)
 		{
 			int curNodeID = m_shortestNode.Values[0];
 			m_shortestNode.RemoveAt(0);
@@ -201,7 +168,7 @@ public class AntNavigator  : MonoBehaviour{
 					continue;
 				if (m_closeNode.Contains(nodeID))
 					continue;
-				if (m_background.Tiles[yy, xx] != Helper.OPEN_TILE && m_digy == false)
+				if (m_background.Tiles[yy, xx] != TiledMap.Type.OPEN_TILE && m_digy == false)
 					continue;
 				
 				int dy = gpt.y-yy;
@@ -209,11 +176,15 @@ public class AntNavigator  : MonoBehaviour{
 				
 				int distance = dy*dy + dx*dx;				
 				
-				if (m_background.Tiles[yy, xx] == Helper.CLOSE_TILE)
+				if (m_background.Tiles[yy, xx] == TiledMap.Type.CLOSE_TILE)
 					distance += (int)(distance*0.2F);
-				else if (m_background.Tiles[yy, xx] == Helper.HILL_TILE)
+				else if (m_background.Tiles[yy, xx] == TiledMap.Type.HILL_TILE)
 					distance += (int)(distance*0.5F);
-				
+
+				int a = m_shortestNode.IndexOfValue(nodeID);
+				if (0 <= a)
+					m_shortestNode.RemoveAt(a);
+
 				m_shortestNode.Add(distance, nodeID);
 
 			}

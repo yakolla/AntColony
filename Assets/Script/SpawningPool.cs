@@ -108,18 +108,18 @@ public class SpawningPool<T>  : MonoBehaviour where T : SpawnBaseObj  {
 		m_objs.Clear();
 	}
 
-	public int RandomSpawnType(SpawnObjType defaultSpawnType)
+	public SpawnObjType RandomSpawnType(SpawnObjType defaultSpawnType)
 	{
 		int random = Random.Range(1, m_maxRatio);
 		for(int i = 0 ; i < m_spawnRatios.Length; ++i)
 		{
 			if (random < m_spawnRatios[i].m_ratio)
 			{
-				return (int)m_spawnRatios[i].m_spawnType;
+				return m_spawnRatios[i].m_spawnType;
 			}
 		}
 		
-		return (int)defaultSpawnType;
+		return defaultSpawnType;
 	}
 
 	public Dictionary<SpawnObjType, List<string> > SpawnKeys

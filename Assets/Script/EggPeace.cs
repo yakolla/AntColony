@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 public class EggPeace : CarryAble {
 
-	float	m_hatchOutTime = 1f*5;
+	float	m_hatchOutTime = 1f*6;
 
 	bool	m_startedBuilding = false;
 
@@ -28,7 +28,7 @@ public class EggPeace : CarryAble {
 	override public void OnKill()
 	{
 
-		Ant ant = Helper.GetColony(m_colony).AntSpawningPool.Spawn(Helper.GetColony(m_colony).AntSpawningPool.RandomSpawnType(SpawnObjType.AntWorker));
+		Ant ant = Helper.GetColony(m_colony).AntSpawningPool.Spawn((int)Helper.GetColony(m_colony).AntSpawningPool.RandomSpawnType(SpawnObjType.AntWorker));
 		if (ant != null)
 		{
 			Helper.GetColony(m_colony).AntSpawningPool.StartBuilding(ant, m_holder.Onwer.transform.position);
