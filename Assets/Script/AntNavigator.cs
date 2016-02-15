@@ -23,6 +23,7 @@ public class AntNavigator  : MonoBehaviour{
 
 	SortedList<int, int> m_shortestNode = new SortedList<int, int>(new Helper.DuplicateKeyComparer<int>());
 	List<int>		m_path = new List<int>();
+	List<Vector3>		m_waypoints = new List<Vector3>();
 	Background m_background;
 	// Use this for initialization
 	public void Start () {
@@ -88,6 +89,11 @@ public class AntNavigator  : MonoBehaviour{
 			if (0 == Point.Distance(m_goal, transform.position))
 			{
 				OnReachToGoal();
+				if (0 < m_waypoints.Count)
+				{
+					GoTo(m_waypoints[0], m_digy);
+					m_waypoints.RemoveAt(0);
+				}
 			}
 			else
 			{
@@ -113,10 +119,6 @@ public class AntNavigator  : MonoBehaviour{
 		transform.position = Vector3.MoveTowards(transform.position, m_smallGoal, m_speed*Time.deltaTime);
 		m_background.SetPixel(transform.position, TiledMap.Type.OPEN_TILE);
 	}
-
-
-
-
 
 	struct PathNode
 	{
@@ -206,4 +208,8 @@ public class AntNavigator  : MonoBehaviour{
 		return path;
 	}
 
+	public void AddWayPoints(Vector3 pos)
+	{
+		m_waypoints.Add(pos);
+	}
 }

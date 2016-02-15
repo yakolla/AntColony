@@ -109,6 +109,7 @@ public class Ant : SpawnBaseObj {
 				digy = true;
 				break;
 			case AICommandType.ATTACK:
+				m_navigator.AddWayPoints(Helper.GetColony(Colony).GetRandomGround());
 				target = Helper.GetColony(1).RoomSpawningPool.GetSpawnedObject(m_cmd.UID);
 				digy = false;
 				break;

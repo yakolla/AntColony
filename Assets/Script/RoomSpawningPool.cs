@@ -9,6 +9,9 @@ public class RoomSpawningPool : SpawningPool<Room> {
 	[SerializeField]
 	bool	m_auto = false;
 
+	[SerializeField]
+	bool	m_ai = false;
+
 	List<Vector3>	m_spots = new List<Vector3>();
 
 	const int GAP_SIZE = 2;
@@ -54,6 +57,13 @@ public class RoomSpawningPool : SpawningPool<Room> {
 	{
 		if (m_auto == true)
 		{
+			if (m_ai == true)
+			{
+				Rect area = Helper.GetColony(Colony).Area;
+				Room room = Spawn((int)SpawnObjType.RoomQueen);
+				Point pt = Point.ToPoint(new Vector3(area.x+area.width/2, -(area.y+area.height/2), 0));
+				StartBuilding(room, Point.ToVector(pt));
+			}
 			StartCoroutine(LoopAutoSpawnRoom());
 		}
 	}
