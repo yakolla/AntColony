@@ -21,9 +21,8 @@ public class AntNavigator  : MonoBehaviour{
 
 	bool		m_stop = false;
 
-	SortedList<int, int> m_shortestNode = new SortedList<int, int>(new Helper.DuplicateKeyComparer<int>());
+
 	List<int>		m_path = new List<int>();
-	List<Vector3>		m_waypoints = new List<Vector3>();
 	Background m_background;
 	// Use this for initialization
 	public void Start () {
@@ -38,12 +37,14 @@ public class AntNavigator  : MonoBehaviour{
 		get {return m_oriDigy;}
 	}
 
+
 	public void GoTo(Vector3 goal, bool digy)
 	{
 		m_goal = goal;
 		m_smallGoal = transform.position;
 		m_digy = digy;
 		m_stop = false;
+
 	}
 
 	public void RestartGo()
@@ -73,7 +74,7 @@ public class AntNavigator  : MonoBehaviour{
 	void OnReachToGoal()
 	{
 		m_closeNode.Clear();
-		m_shortestNode.Clear();
+		m_path.Clear();
 		SpawnBaseObj backupTarget = m_target;
 		m_target = null;
 		GetComponent<SpawnBaseObj>().OnReachToGoal(backupTarget);
@@ -87,13 +88,8 @@ public class AntNavigator  : MonoBehaviour{
 		if (0 == Point.Distance(m_smallGoal, transform.position))
 		{
 			if (0 == Point.Distance(m_goal, transform.position))
-			{
+			{			
 				OnReachToGoal();
-				if (0 < m_waypoints.Count)
-				{
-					GoTo(m_waypoints[0], m_digy);
-					m_waypoints.RemoveAt(0);
-				}
 			}
 			else
 			{
@@ -110,8 +106,8 @@ public class AntNavigator  : MonoBehaviour{
 					if (m_path.Count == 1)
 					{
 						m_closeNode.Clear();
+						GoTo(m_target, m_oriDigy);
 					}
-					GoTo(m_target, m_oriDigy);
 				}
 			}
 		}
@@ -122,94 +118,104 @@ public class AntNavigator  : MonoBehaviour{
 
 	struct PathNode
 	{
-		public int nextNode;
-		public PathNode(int nextNode)
+		public int h;
+		public int g;
+		public int nodeId;
+		public int parentNodeId;
+		public PathNode(int nodeId, int parentId)
 		{
-			this.nextNode = nextNode;
+			h = 0;
+			g = 0;
+			this.nodeId = nodeId;
+			this.parentNodeId = parentId;
 		}
+		public int f
+		{
+			get {return h+g;}
+		}
+
 	}
 
 	List<int> searchShortestAStarPath(Point cpt, Point gpt)
 	{
 
-		m_shortestNode.Clear();
-
+		SortedList<int, int> opneNodes = new SortedList<int, int>(new Helper.DuplicateKeyComparer<int>());
 
 		Dictionary<int, PathNode> pathNodes = new Dictionary<int, PathNode>();
 
 		int[] ax = {-1, 0, 1, 0};
 		int[] ay = {0, -1, 0, 1};
-		m_shortestNode.Add(0, m_background.getNodeID(cpt.x, cpt.y));
-		int prevNodeID = m_shortestNode.Values[0];
-		int lastNodeID = prevNodeID;
-		while(0 < m_shortestNode.Count && pathNodes.Count < 10)
+		opneNodes.Add(0, m_background.getNodeID(cpt.x, cpt.y));
+		pathNodes.Add(m_background.getNodeID(cpt.x, cpt.y), new PathNode(m_background.getNodeID(cpt.x, cpt.y), m_background.getNodeID(cpt.x, cpt.y)));
+		int lastNodeID = 0;
+		while(0 < opneNodes.Count && pathNodes.Count < 20)
 		{
-			int curNodeID = m_shortestNode.Values[0];
-			m_shortestNode.RemoveAt(0);
+			lastNodeID = opneNodes.Values[0];
+			opneNodes.RemoveAt(0);
 
-			if (false == m_closeNode.Contains(curNodeID))
-				m_closeNode.Add(curNodeID);
 
-			if (pathNodes.ContainsKey(prevNodeID))
-				pathNodes[prevNodeID] = new PathNode(curNodeID);
-			else
-				pathNodes.Add(prevNodeID, new PathNode(curNodeID));
-
-			prevNodeID = curNodeID;
-			lastNodeID = curNodeID;
-
-			if (0 == Point.Distance(m_background.getPoint(curNodeID), gpt))
+			if (0 == Point.Distance(m_background.getPoint(lastNodeID), gpt))
 				break;
 
 			for(int i = 0; i < 4; ++i)
 			{
-				int yy = m_background.getPoint(curNodeID).y+ay[i];
-				int xx = m_background.getPoint(curNodeID).x+ax[i];
-				int nodeID = m_background.getNodeID(xx, yy);
+
+				int yy = m_background.getPoint(lastNodeID).y+ay[i];
+				int xx = m_background.getPoint(lastNodeID).x+ax[i];
+
 				if (m_background.UnableTo(xx, yy))
-					continue;
-				if (m_closeNode.Contains(nodeID))
 					continue;
 				if (m_background.Tiles[yy, xx] != TiledMap.Type.OPEN_TILE && m_digy == false)
 					continue;
-				
-				int dy = gpt.y-yy;
-				int dx = gpt.x-xx;
-				
-				int distance = dy*dy + dx*dx;				
-				
+
+				int childNodeID = m_background.getNodeID(xx, yy);
+
+				if (false == pathNodes.ContainsKey(childNodeID))				
+					pathNodes.Add(childNodeID, new PathNode(childNodeID, lastNodeID));
+
+
+				int gdy = gpt.y-yy;
+				int gdx = gpt.x-xx;
+
+				PathNode childNode = new PathNode(childNodeID, lastNodeID);
+				childNode.g = (gdy*gdy + gdx*gdx);
+				childNode.h = pathNodes[lastNodeID].h + 1;
+
 				if (m_background.Tiles[yy, xx] == TiledMap.Type.CLOSE_TILE)
-					distance += (int)(distance*0.2F);
+					childNode.g += (int)(childNode.g*0.1F);
 				else if (m_background.Tiles[yy, xx] == TiledMap.Type.HILL_TILE)
-					distance += (int)(distance*0.5F);
+					childNode.g += (int)(childNode.g*0.5F);
 
-				int a = m_shortestNode.IndexOfValue(nodeID);
+				if (m_closeNode.Contains(childNodeID) && pathNodes[childNodeID].f < childNode.f)
+					continue;
+				int a = opneNodes.IndexOfValue(childNodeID);
+				if (0 <= a && pathNodes[childNodeID].f < childNode.f)
+					continue;
+
+				pathNodes[childNodeID] = childNode;
+
 				if (0 <= a)
-					m_shortestNode.RemoveAt(a);
+					opneNodes.RemoveAt(a);
 
-				m_shortestNode.Add(distance, nodeID);
+				opneNodes.Add(childNode.f, childNodeID);
 
 			}
+
+			m_closeNode.Add(lastNodeID);
 		}
 		List<int> path = new List<int>();
-		int nID = m_background.getNodeID(cpt.x, cpt.y);
+		int nID = lastNodeID;
 		while(true)
 		{
 			path.Add(nID);
 
-			if (pathNodes.ContainsKey(nID) == false)
-				break;
-
-			if (nID == lastNodeID)
+			if (nID == m_background.getNodeID(cpt.x, cpt.y))
 				break;			
 
-			nID = pathNodes[nID].nextNode;
+			nID = pathNodes[nID].parentNodeId;
 		}
+		path.Reverse();
 		return path;
 	}
 
-	public void AddWayPoints(Vector3 pos)
-	{
-		m_waypoints.Add(pos);
-	}
 }

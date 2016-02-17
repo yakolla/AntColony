@@ -68,5 +68,7 @@ public class AntWorker : Ant {
 			ContinueNextAICommand();
 		else
 			m_navigator.GoTo(target, false);
+		
+		Work ();
 	}
 }

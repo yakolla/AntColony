@@ -109,9 +109,9 @@ public class Ant : SpawnBaseObj {
 				digy = true;
 				break;
 			case AICommandType.ATTACK:
-				m_navigator.AddWayPoints(Helper.GetColony(Colony).GetRandomGround());
 				target = Helper.GetColony(1).RoomSpawningPool.GetSpawnedObject(m_cmd.UID);
 				digy = false;
+
 				break;
 			}
 
@@ -121,7 +121,6 @@ public class Ant : SpawnBaseObj {
 		{
 			DoDefaultAI();
 		}
-		
 
 	}
 
@@ -151,6 +150,7 @@ public class Ant : SpawnBaseObj {
 			}
 
 		}
+
 	}
 
 	public void Attack(Ant victim)
@@ -160,10 +160,15 @@ public class Ant : SpawnBaseObj {
 		m_animator.SetTrigger("Attack");
 	}
 
+	public void Work()
+	{
+		m_navigator.Stop();
+		m_animator.SetTrigger("Work");
+	}
+
 	public void OnAttackAniFinish()
 	{
 		m_navigator.RestartGo();
-
 	}
 
 	void OnTriggerEnter2D(Collider2D other) {
