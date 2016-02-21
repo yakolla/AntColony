@@ -33,15 +33,6 @@ public class Room : SpawnBaseObj {
 
 	override public void StartBuilding()
 	{
-		Point st = Point.ToPoint(transform.position);
-		for(int y = 0; y < 4; ++y)
-		{
-			for(int x = 0; x < 4; ++x)
-			{
-				//Helper.GetBackground().SetPixel(st.x+x, st.y+y, Helper.ROOM_TILE);
-			}
-		}
-		Helper.GetBackground().SetPixel(st.x, st.y, TiledMap.Type.OPEN_TILE);
 		HP = MaxHP;
 	}
 

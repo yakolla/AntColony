@@ -22,8 +22,6 @@ public class SpawningPool<T>  : MonoBehaviour where T : SpawnBaseObj  {
 
 	[SerializeField]
 	int m_colony = 0;
-
-
 	
 	[SerializeField]
 	SpawnRatio[]		m_spawnRatios = null;
@@ -87,6 +85,19 @@ public class SpawningPool<T>  : MonoBehaviour where T : SpawnBaseObj  {
 		return null;
 	}
 
+	public T PopSpawnedObject(string uid)
+	{
+		T spawned = null;
+		if (m_objs.ContainsKey(uid))
+		{
+			spawned = m_objs[uid];
+			m_objs.Remove(uid);
+			m_keys[spawned.Type].Remove(uid);
+		}
+		
+		return spawned;
+	}
+
 	public void Kill(T spawned)
 	{
 		spawned.OnKill();
@@ -135,5 +146,28 @@ public class SpawningPool<T>  : MonoBehaviour where T : SpawnBaseObj  {
 	public int Colony
 	{
 		get {return m_colony;}
+	}
+
+	public void MoveToColony(SpawningPool<T> pool)
+	{
+		List<string> uids = new List<string>(m_objs.Keys);
+		foreach(string uid in uids)
+		{
+			T spawend = GetSpawnedObject(uid);
+			if (spawend.Type == SpawnObjType.RoomQueen)
+				continue;
+
+			spawend = PopSpawnedObject(uid);
+			spawend.Colony = pool.Colony;
+			pool.StartBuilding(spawend, spawend.transform.position);
+		}
+
+		Clear();
+	}
+
+	public int MaxSpawnCount
+	{
+		set { m_maxSpawnCount = value; }
+		get { return m_maxSpawnCount; }
 	}
 }

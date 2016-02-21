@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-public class EggPeace : CarryAble {
+public class EggPeace : Peace {
 
 	float	m_hatchOutTime = 1f*6;
 

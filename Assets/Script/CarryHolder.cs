@@ -10,7 +10,7 @@ public class CarryHolder {
 	int				m_cols;
 	int				m_carryCount = 0;
 
-	List<CarryAble>	m_carryAbles = new List<CarryAble>();
+	List<Peace>	m_peaces = new List<Peace>();
 
 	ModifiedTexture2D	m_modifiedTexture2D = new ModifiedTexture2D();
 	SpawnBaseObj	m_owner;
@@ -35,43 +35,54 @@ public class CarryHolder {
 	}
 
 
-	public void PutOn(CarryAble carry)
+	public void PutOn(Peace peace)
 	{
-		if (carry == null)
+		if (peace == null)
 			return;
 
 		if (m_carryCount == m_rows*m_cols)
 			return;
 
-		carry.SetCarryHolder(this);
-		m_modifiedTexture2D.SetPixels32ByIndex(m_carryCount, m_cols, Helper.ONE_PEACE_SIZE, Helper.ONE_PEACE_SIZE, carry.Img.GetPixels32());
+		peace.Holder = this;
+		m_modifiedTexture2D.SetPixels32ByIndex(m_carryCount, m_cols, Helper.ONE_PEACE_SIZE, Helper.ONE_PEACE_SIZE, peace.Img.GetPixels32());
 		m_modifiedTexture2D.Update();
 		++m_carryCount;
-		m_carryAbles.Add(carry);
+		m_peaces.Add(peace);
 	}
 
-	public CarryAble Takeout()
+	public Peace Takeout()
 	{
 		if (m_carryCount == 0)
 			return null;
 
 
-		CarryAble carry = m_carryAbles[0];
-		carry.SetCarryHolder(null);
-		m_carryAbles.RemoveAt(0);
+		Peace peace = m_peaces[0];
+		peace.Holder = null;
+		m_peaces.RemoveAt(0);
 
 		--m_carryCount;
 		Texture2D tex = m_modifiedTexture2D.SliceByIndex(m_carryCount, m_cols, m_width/m_cols, m_height/m_rows);
 		m_modifiedTexture2D.Update();
 
-		return carry;
+		return peace;
 	}
 
 	public void Update()
 	{
-		for (int i = 0; i < m_carryAbles.Count; ++i)
+		for (int i = 0; i < m_peaces.Count; ++i)
 		{
-			m_carryAbles[i].Update();
+			if (m_peaces[i].Holder == null)
+				continue;
+
+			m_peaces[i].Update();
+		}
+	}
+
+	public void Clear()
+	{
+		while(0 < m_peaces.Count)
+		{
+			Takeout();
 		}
 	}
 

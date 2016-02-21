@@ -44,6 +44,11 @@ public class ModifiedTexture2D {
 		}
 	}
 
+	public Color32 GetPixelColor(int x, int y)
+	{
+		return m_img.GetPixel(x, y);
+	}
+
 	public Texture2D Slice(int x, int y, int blockWidth, int blockHeight)
 	{
 		Color[] colors = m_img.GetPixels(x, (m_img.height-y)-blockHeight, blockWidth, blockHeight);

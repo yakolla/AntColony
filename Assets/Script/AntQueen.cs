@@ -77,9 +77,4 @@ public class AntQueen : Ant {
 
 	}
 
-	override public void OnKill ()
-	{
-
-	}
-
 }

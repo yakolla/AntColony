@@ -20,6 +20,7 @@ public class Background : MonoBehaviour {
 	Dictionary<int, int>	m_openTiles = new Dictionary<int, int>();
 
 
+
 	// Use this for initialization
 	void Awake () {
 		Application.runInBackground = true;
@@ -132,6 +133,22 @@ public class Background : MonoBehaviour {
 	{
 		Point pt = Point.ToPoint(pos);
 		SetPixel(pt.x, pt.y, value);
+	}
+
+	public Texture2D GetPixelTex(int x, int y, int blockSize)
+	{
+		Color32 color = m_tiledMap.GetPixelColor(x, y);
+		Texture2D tex = new Texture2D(blockSize, blockSize);
+		for(int yy = 0; yy < blockSize; ++yy)
+		{
+			for(int xx = 0; xx < blockSize; ++xx)
+			{
+				tex.SetPixel(xx, yy, color);
+			}
+		}
+
+		tex.Apply();
+		return tex;
 	}
 
 	public TiledMap.Type[,] Tiles

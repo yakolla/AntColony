@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-public class CarryAble 
+public class Peace 
 {
 	protected Texture2D m_tex;
 	protected CarryHolder m_holder;
@@ -27,11 +27,14 @@ public class CarryAble
 
 	}
 	
-	virtual public  void SetCarryHolder(CarryHolder holder)
+	public  CarryHolder Holder
 	{
-		m_holder = holder;
-		if (holder != null)
-			m_colony = holder.Onwer.Colony;
+		set {
+			m_holder = value;
+			if (m_holder != null)
+				m_colony = m_holder.Onwer.Colony;
+		}
+		get { return m_holder; }
 	}
 
 	public Texture2D Img

@@ -36,7 +36,7 @@ public class Food : SpawnBaseObj {
 		StartCoroutine(PeriodicSignal());
 	}
 
-	public CarryAble	Slice()
+	public Peace	Slice()
 	{
 		Texture2D tex = null;
 		int index = (MaxHP-HP);

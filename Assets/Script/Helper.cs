@@ -12,6 +12,7 @@ public enum SpawnObjType
 	RoomQueen,
 	RoomFood,
 	RoomEgg,
+	RoomAntWorker,
 	Egg,
 	Count
 }

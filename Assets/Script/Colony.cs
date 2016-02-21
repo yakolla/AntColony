@@ -17,6 +17,9 @@ public class Colony  : MonoBehaviour{
 
 	[SerializeField]
 	Rect		m_area;
+
+	Point		m_startPoint;
+
 	// Use this for initialization
 	public void Awake () {
 		m_roomSpawningPool = transform.Find("Rooms").GetComponent<RoomSpawningPool>();
@@ -100,7 +103,10 @@ public class Colony  : MonoBehaviour{
 
 	public Vector3	GetRandomGround()
 	{
-		return new Vector3(Random.Range(m_area.x, m_area.x+m_area.width), 0, 0);
+		Point pt;
+		pt.x = (int)Random.Range(m_area.x, m_area.x+m_area.width);
+		pt.y = 0;
+		return Point.ToVector(pt);
 	}
 
 	public Rect Area
@@ -137,4 +143,9 @@ public class Colony  : MonoBehaviour{
 		return room;
 	}
 
+	public Point StartPoint
+	{
+		get { return m_startPoint; }
+		set { m_startPoint = value; }
+	}
 }

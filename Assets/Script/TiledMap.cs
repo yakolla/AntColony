@@ -9,9 +9,6 @@ public class TiledMap  {
 	{
 		CLOSE_TILE = 1,
 		OPEN_TILE,
-		ROOM_TILE,
-		FOOD_TILE,
-		NATURAL_ENEMY_TILE,
 		HILL_TILE,
 		COUNT
 	}
@@ -75,12 +72,6 @@ public class TiledMap  {
 
 			m_modifiedTexture.SetPixel(x, y, new Color32(0, 0, 0, 0));
 			break;
-		case TiledMap.Type.ROOM_TILE:
-			m_modifiedTexture.SetPixel(x, y, Color.red);
-			break;
-		case TiledMap.Type.FOOD_TILE:
-			m_modifiedTexture.SetPixel(x, y, Color.cyan);
-			break;
 		//case Helper.BLOCK_TILE:
 		//	m_img.SetPixel(x, m_img.height-y, Color.gray);
 		//	break;
@@ -94,6 +85,11 @@ public class TiledMap  {
 	{
 		Point cpt = Point.ToPoint(pos);
 		SetPixel(cpt.x, cpt.y, value);
+	}
+
+	public Color32 GetPixelColor(int x, int y)
+	{
+		return m_modifiedTexture.GetPixelColor(x, y);
 	}
 
 	public TiledMap.Type[,] Tiles

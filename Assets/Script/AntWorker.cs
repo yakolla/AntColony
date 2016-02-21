@@ -3,21 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 public class AntWorker : Ant {
 
-
-
-
-	
-	// Update is called once per frame
-	new void Update () 
-	{
-		base.Update();
-	}
-
-	override public void OnKill ()
-	{
-
-	}
-
 	override public void OnReachToGoal(SpawnBaseObj target)
 	{		
 		base.OnReachToGoal(target);
@@ -57,6 +42,11 @@ public class AntWorker : Ant {
 
 				}
 				else
+				{
+					target = null;
+				}
+				break;
+			case SpawnObjType.RoomAntWorker:
 				{
 					target = null;
 				}

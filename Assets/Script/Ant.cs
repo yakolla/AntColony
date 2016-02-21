@@ -15,6 +15,8 @@ public class Ant : SpawnBaseObj {
 
 	AICommand m_cmd = null;
 
+	float		m_alphaSpeed = 0f;
+
 	protected CarryHolder	m_carryHolder = new CarryHolder();
 
 	public void Awake()
@@ -45,7 +47,7 @@ public class Ant : SpawnBaseObj {
 
 	public void Update()
 	{
-		if (HP <= 0 || m_hunger <= 0)
+		if (m_hunger <= 0)
 			Helper.GetColony(Colony).AntSpawningPool.Kill(this);
 	}
 
@@ -143,6 +145,7 @@ public class Ant : SpawnBaseObj {
 					{
 						roomFood.CarryHolder.Takeout();
 						m_hunger = Mathf.Min(m_hunger+m_maxHunger, m_maxHunger);
+						StartCoroutine(LoopForBuffSpeed(10f, 1f));
 					}
 				}
 				break;
@@ -153,9 +156,45 @@ public class Ant : SpawnBaseObj {
 
 	}
 
+	IEnumerator LoopForBuffSpeed(float time, float amount)
+	{
+
+		SpriteRenderer ren = GetComponentInChildren<SpriteRenderer>();
+		Color backup = ren.color;
+		ren.color = Color.blue;
+		m_navigator.AlphaSpeed += amount;
+		yield return new WaitForSeconds(time);
+
+		if (m_navigator != null)
+		{
+			m_navigator.AlphaSpeed -= amount;
+			ren.color = backup;
+		}
+	}
+
+	override public void OnKill()
+	{
+		m_carryHolder.Clear();
+	}
+
 	public void Attack(Ant victim)
 	{
 		victim.HP--;
+		if (victim.HP <= 0)
+		{
+			if (victim.Type == SpawnObjType.AntQueen)
+			{
+				Helper.GetColony(victim.Colony).RoomSpawningPool.MoveToColony(Helper.GetColony(Colony).RoomSpawningPool);
+				Helper.GetColony(Colony).AntSpawningPool.MaxSpawnCount += Helper.GetColony(victim.Colony).AntSpawningPool.MaxSpawnCount;
+				Helper.GetColony(victim.Colony).AntSpawningPool.Clear();
+				Helper.GetColony(victim.Colony).FoodSpawningPool.Clear();
+			}
+			else
+			{
+				Helper.GetColony(victim.Colony).AntSpawningPool.Kill(victim);
+			}
+
+		}
 		m_navigator.Stop();
 		m_animator.SetTrigger("Attack");
 	}
@@ -169,6 +208,11 @@ public class Ant : SpawnBaseObj {
 	public void OnAttackAniFinish()
 	{
 		m_navigator.RestartGo();
+	}
+
+	public CarryHolder CarryHolder
+	{
+		get { return m_carryHolder; }
 	}
 
 	void OnTriggerEnter2D(Collider2D other) {

@@ -10,6 +10,8 @@ public class AntNavigator  : MonoBehaviour{
 	[SerializeField]
 	float	m_speed = 1f;
 
+	float	m_alphaSpeed = 0f;
+
 	[SerializeField]
 	bool	m_oriDigy = false;
 	bool	m_digy = true;
@@ -20,14 +22,16 @@ public class AntNavigator  : MonoBehaviour{
 	HashSet<int> m_closeNode = new HashSet<int>();
 
 	bool		m_stop = false;
+	int			m_patrol = 0;
 
+	Ant			m_ant;
 
 	List<int>		m_path = new List<int>();
 	Background m_background;
 	// Use this for initialization
 	public void Start () {
+		m_ant = GetComponent<Ant>();
 		m_background = Helper.GetBackground();
-
 		m_background.SetPixel(transform.position, TiledMap.Type.OPEN_TILE);
 
 	}
@@ -37,6 +41,16 @@ public class AntNavigator  : MonoBehaviour{
 		get {return m_oriDigy;}
 	}
 
+	public float AlphaSpeed
+	{
+		get { return m_alphaSpeed; }
+		set { m_alphaSpeed = value; }
+	}
+
+	public float Speed
+	{
+		get { return m_speed + m_alphaSpeed; }
+	}
 
 	public void GoTo(Vector3 goal, bool digy)
 	{
@@ -89,7 +103,36 @@ public class AntNavigator  : MonoBehaviour{
 		{
 			if (0 == Point.Distance(m_goal, transform.position))
 			{			
-				OnReachToGoal();
+				if (m_patrol == 1)
+				{
+					// 지상에다 흙을 갔다 버림
+					m_closeNode.Clear();
+					m_path.Clear();
+					Point pt = Point.ToPoint(transform.position);
+					BackgroundPeace peace = new BackgroundPeace();
+					peace.Start(m_background.GetPixelTex(pt.x, pt.y, Helper.ONE_PEACE_SIZE));
+					m_ant.CarryHolder.PutOn(peace);
+
+					GoTo(Point.ToVector(Helper.GetColony(m_ant.Colony).StartPoint), Digy);
+					m_patrol = 2;
+
+					m_ant.Work();
+
+				}
+				else if (m_patrol == 2)
+				{
+					// 다시 흙을 파.
+					m_closeNode.Clear();
+					m_path.Clear();
+					GoTo(m_target, Digy);
+					m_patrol = 0;
+					m_ant.CarryHolder.Takeout();
+				}
+				else
+				{
+					OnReachToGoal();
+				}
+
 			}
 			else
 			{
@@ -112,7 +155,7 @@ public class AntNavigator  : MonoBehaviour{
 			}
 		}
 
-		transform.position = Vector3.MoveTowards(transform.position, m_smallGoal, m_speed*Time.deltaTime);
+		transform.position = Vector3.MoveTowards(transform.position, m_smallGoal, Speed*Time.deltaTime);
 		m_background.SetPixel(transform.position, TiledMap.Type.OPEN_TILE);
 	}
 
@@ -138,6 +181,14 @@ public class AntNavigator  : MonoBehaviour{
 
 	List<int> searchShortestAStarPath(Point cpt, Point gpt)
 	{
+		float hasPath = 0;
+		if (m_target != null)
+		{
+			Room targetRoom = m_target.GetComponent<Room>();
+			if (targetRoom != null && targetRoom.HasPath == true)
+				 hasPath = 0.1f;
+
+		}
 
 		SortedList<int, int> opneNodes = new SortedList<int, int>(new Helper.DuplicateKeyComparer<int>());
 
@@ -148,11 +199,10 @@ public class AntNavigator  : MonoBehaviour{
 		opneNodes.Add(0, m_background.getNodeID(cpt.x, cpt.y));
 		pathNodes.Add(m_background.getNodeID(cpt.x, cpt.y), new PathNode(m_background.getNodeID(cpt.x, cpt.y), m_background.getNodeID(cpt.x, cpt.y)));
 		int lastNodeID = 0;
-		while(0 < opneNodes.Count && pathNodes.Count < 20)
+		while(0 < opneNodes.Count && pathNodes.Count < 30)
 		{
 			lastNodeID = opneNodes.Values[0];
 			opneNodes.RemoveAt(0);
-
 
 			if (0 == Point.Distance(m_background.getPoint(lastNodeID), gpt))
 				break;
@@ -181,10 +231,12 @@ public class AntNavigator  : MonoBehaviour{
 				childNode.g = (gdy*gdy + gdx*gdx);
 				childNode.h = pathNodes[lastNodeID].h + 1;
 
+
+
 				if (m_background.Tiles[yy, xx] == TiledMap.Type.CLOSE_TILE)
-					childNode.g += (int)(childNode.g*0.1F);
+					childNode.g += (int)(childNode.g*(0.1F+hasPath));
 				else if (m_background.Tiles[yy, xx] == TiledMap.Type.HILL_TILE)
-					childNode.g += (int)(childNode.g*0.5F);
+					childNode.g += (int)(childNode.g*(0.5F+hasPath));
 
 				if (m_closeNode.Contains(childNodeID) && pathNodes[childNodeID].f < childNode.f)
 					continue;
@@ -210,12 +262,34 @@ public class AntNavigator  : MonoBehaviour{
 			path.Add(nID);
 
 			if (nID == m_background.getNodeID(cpt.x, cpt.y))
-				break;			
+			{
+				break;
+			}
 
 			nID = pathNodes[nID].parentNodeId;
 		}
 		path.Reverse();
+
+		if (m_patrol == 0 && m_digy == true)
+		{
+			for(int i = 0; i < path.Count; ++i)
+			{
+				nID = path[i];
+				Point pt = m_background.getPoint(nID);
+				if (m_background.Tiles[pt.y, pt.x] == TiledMap.Type.CLOSE_TILE)
+				{
+					m_patrol = 1;
+					m_goal = Point.ToVector(pt);
+
+					path.RemoveRange(i+1, path.Count-i-1);
+					break;
+				}
+			}
+		}
+
 		return path;
 	}
+
+
 
 }
