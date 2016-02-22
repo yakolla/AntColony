@@ -16,7 +16,7 @@ public class RoomSpawningPool : SpawningPool<Room> {
 
 	const int GAP_SIZE = 10;
 
-	override public void OnClickSpawn(Room obj)
+	override public void OnClickSpawn(string prefName)
 	{
 		if (m_prepare != null)
 		{
@@ -25,7 +25,7 @@ public class RoomSpawningPool : SpawningPool<Room> {
 			return;
 		}
 
-		m_prepare = Spawn((int)obj.Type);
+		m_prepare = Spawn(prefName);
 	}
 
 	override public void StartBuilding(Room room, Vector3 pos)
@@ -82,7 +82,7 @@ public class RoomSpawningPool : SpawningPool<Room> {
 			if (m_ai == true)
 			{
 				Rect area = Helper.GetColony(Colony).Area;
-				Room room = Spawn((int)SpawnObjType.RoomQueen);
+				Room room = Spawn(SpawnObjType.RoomQueen.ToString());
 				Point pt;
 				pt.x = (int)(area.x+area.width/2);
 				pt.y = (int)(area.y+area.height/2);
@@ -117,7 +117,7 @@ public class RoomSpawningPool : SpawningPool<Room> {
 
 					int randRoom = Random.Range(0, m_spots.Count);
 					
-					Room room = Spawn((int)SpawnObjType.RoomEgg);
+					Room room = Spawn(SpawnObjType.RoomEgg.ToString());
 					StartBuilding(room, Point.ToVector(m_spots[randRoom]));
 					m_spots.RemoveAt(randRoom);
 				}
@@ -127,7 +127,7 @@ public class RoomSpawningPool : SpawningPool<Room> {
 						break;
 
 					int randRoom = Random.Range(0, m_spots.Count);
-					Room room = Spawn((int)SpawnObjType.RoomFood);
+					Room room = Spawn(SpawnObjType.RoomFood.ToString());
 
 					StartBuilding(room, Point.ToVector(m_spots[randRoom]));
 					m_spots.RemoveAt(randRoom);
@@ -138,7 +138,7 @@ public class RoomSpawningPool : SpawningPool<Room> {
 						break;
 
 					int randRoom = Random.Range(0, m_spots.Count);
-					Room room = Spawn((int)SpawnObjType.RoomAntWorker);
+					Room room = Spawn(SpawnObjType.RoomAntWorker.ToString());
 
 					StartBuilding(room, Point.ToVector(m_spots[randRoom]));
 					m_spots.RemoveAt(randRoom);

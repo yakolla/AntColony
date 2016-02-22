@@ -3,9 +3,9 @@ using System.Collections;
 
 public class NaturalEnemySpawningPool : SpawningPool<NaturalEnemy> {
 
-	override public void OnClickSpawn(NaturalEnemy obj)
+	override public void OnClickSpawn(string prefName)
 	{
-		StartBuilding(Spawn((int)SpawnObjType.NaturalEnemy), Helper.GetColony(Colony).GetRandomGround());
+		StartBuilding(Spawn(prefName), Helper.GetColony(Colony).GetRandomGround());
 	}
 
 }

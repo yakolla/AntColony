@@ -5,6 +5,9 @@ public class Food : SpawnBaseObj {
 
 	ModifiedTexture2D	m_modifiedTexture = new ModifiedTexture2D();
 
+	[SerializeField]
+	Buff	m_buff;
+
 	void Awake()
 	{
 
@@ -43,7 +46,7 @@ public class Food : SpawnBaseObj {
 		--HP;
 
 		tex = m_modifiedTexture.SliceByIndex(index, m_modifiedTexture.Width/Helper.ONE_PEACE_SIZE, Helper.ONE_PEACE_SIZE, Helper.ONE_PEACE_SIZE);
-		FoodPeace peace = new FoodPeace();
+		FoodPeace peace = new FoodPeace(m_buff);
 		peace.Start(tex);
 		if (0 == HP)
 			Helper.GetColony(Colony).FoodSpawningPool.Kill(this);

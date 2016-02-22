@@ -9,7 +9,7 @@ public class AntNavigator  : MonoBehaviour{
 
 	[SerializeField]
 	float	m_speed = 1f;
-
+	[SerializeField]
 	float	m_alphaSpeed = 0f;
 
 	[SerializeField]

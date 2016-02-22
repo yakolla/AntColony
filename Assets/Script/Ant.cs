@@ -143,9 +143,9 @@ public class Ant : SpawnBaseObj {
 				{
 					if (roomFood.CarryHolder.CarryCount > 0)
 					{
-						roomFood.CarryHolder.Takeout();
+						FoodPeace foodPeace = (FoodPeace)roomFood.CarryHolder.Takeout();
 						m_hunger = Mathf.Min(m_hunger+m_maxHunger, m_maxHunger);
-						StartCoroutine(LoopForBuffSpeed(10f, 1f));
+						StartCoroutine(LoopForBuffSpeed(foodPeace.Buff));
 					}
 				}
 				break;
@@ -156,18 +156,18 @@ public class Ant : SpawnBaseObj {
 
 	}
 
-	IEnumerator LoopForBuffSpeed(float time, float amount)
+	IEnumerator LoopForBuffSpeed(Buff buff)
 	{
 
 		SpriteRenderer ren = GetComponentInChildren<SpriteRenderer>();
 		Color backup = ren.color;
-		ren.color = Color.blue;
-		m_navigator.AlphaSpeed += amount;
-		yield return new WaitForSeconds(time);
+		ren.color = buff.color;
+		m_navigator.AlphaSpeed += buff.value;
+		yield return new WaitForSeconds(buff.duration);
 
 		if (m_navigator != null)
 		{
-			m_navigator.AlphaSpeed -= amount;
+			m_navigator.AlphaSpeed -= buff.value;
 			ren.color = backup;
 		}
 	}

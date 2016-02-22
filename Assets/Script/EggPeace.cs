@@ -28,7 +28,7 @@ public class EggPeace : Peace {
 	override public void OnKill()
 	{
 
-		Ant ant = Helper.GetColony(m_colony).AntSpawningPool.Spawn((int)Helper.GetColony(m_colony).AntSpawningPool.RandomSpawnType(SpawnObjType.AntWorker));
+		Ant ant = Helper.GetColony(m_colony).AntSpawningPool.Spawn(Helper.GetColony(m_colony).AntSpawningPool.RandomSpawnType(SpawnObjType.AntWorker).ToString());
 		if (ant != null)
 		{
 			Helper.GetColony(m_colony).AntSpawningPool.StartBuilding(ant, m_holder.Onwer.transform.position);

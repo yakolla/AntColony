@@ -6,9 +6,9 @@ public class AntSpawningPool : SpawningPool<Ant> {
 
 
 
-	override public void OnClickSpawn(Ant obj)
+	override public void OnClickSpawn(string prefName)
 	{
-		StartBuilding(Spawn((int)obj.Type), Helper.GetColony(Colony).GetRandomGround());
+		StartBuilding(Spawn(prefName), Helper.GetColony(Colony).GetRandomGround());
 	}
 
 	public void OnClickAttack()

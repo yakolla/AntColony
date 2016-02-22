@@ -67,7 +67,7 @@ public class Colony  : MonoBehaviour{
 		for(int i = 0; i < roomCount; ++i)
 		{
 			SpawnObjType type = JsonConvert.DeserializeObject<SpawnObjType>(reader.ReadLine());
-			Room room = m_roomSpawningPool.Spawn((int)type);
+			Room room = m_roomSpawningPool.Spawn(type.ToString());
 			room.Deserialize(reader);
 			m_roomSpawningPool.StartBuilding(room, room.transform.position);
 		}

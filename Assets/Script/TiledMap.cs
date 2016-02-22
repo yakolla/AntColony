@@ -17,12 +17,10 @@ public class TiledMap  {
 	TiledMap.Type[,] m_tiles;
 	bool m_dirty = false;
 
-	Color	m_color;
 
 	// Use this for initialization
-	public void Init (SpriteRenderer renderer, Color color) {
+	public void Init (SpriteRenderer renderer) {
 
-		m_color = color;
 		renderer.sprite = Sprite.Create(m_modifiedTexture.Init(renderer.sprite.texture), renderer.sprite.rect, new Vector2(0f, 1f), 10);
 		m_tiles = new TiledMap.Type[m_modifiedTexture.Height, m_modifiedTexture.Width];
 		for(int y = 0; y < m_modifiedTexture.Height; ++y)
@@ -75,9 +73,7 @@ public class TiledMap  {
 		//case Helper.BLOCK_TILE:
 		//	m_img.SetPixel(x, m_img.height-y, Color.gray);
 		//	break;
-		default:
-			m_modifiedTexture.SetPixel(x, y, m_color);
-			break;
+		
 		}			
 	}
 

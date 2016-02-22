@@ -8,9 +8,6 @@ public class Background : MonoBehaviour {
 	TiledMap	m_tiledMap = new TiledMap();
 
 	[SerializeField]
-	Color	m_color = Color.black;
-
-	[SerializeField]
 	int		m_maxFadingTime = 10;
 
 
@@ -32,7 +29,7 @@ public class Background : MonoBehaviour {
 
 
 		SpriteRenderer renderer = transform.Find("Body").GetComponent<SpriteRenderer>();
-		m_tiledMap.Init(renderer, m_color);
+		m_tiledMap.Init(renderer);
 
 
 		for (int x = 0; x < m_tiledMap.GetWidth(); ++x)

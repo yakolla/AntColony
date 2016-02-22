@@ -15,7 +15,7 @@ public class SpawningPool<T>  : MonoBehaviour where T : SpawnBaseObj  {
 	List<SpawnObjType>		m_types = new List<SpawnObjType>();
 	Dictionary<string, T>	m_objs = new Dictionary<string, T>();
 
-	protected GameObject []	m_prefObjs = new GameObject[(int)SpawnObjType.Count];
+	protected Dictionary<string, GameObject>	m_prefObjs = new Dictionary<string, GameObject>();
 
 	[SerializeField]
 	int	m_maxSpawnCount = 0;
@@ -28,7 +28,7 @@ public class SpawningPool<T>  : MonoBehaviour where T : SpawnBaseObj  {
 	
 	int			m_maxRatio;
 
-	virtual public void OnClickSpawn(T obj){}
+	virtual public void OnClickSpawn(string prefName){}
 
 	void Awake()
 	{
@@ -40,19 +40,17 @@ public class SpawningPool<T>  : MonoBehaviour where T : SpawnBaseObj  {
 		}
 	}
 
-	public T Spawn(int index)
-	{		
-		if (m_maxSpawnCount > 0 && m_objs.Count >= m_maxSpawnCount)
+	public T Spawn(string prefName)
+	{	
+		if (m_maxSpawnCount > 0 && m_maxSpawnCount <= m_objs.Count)
 			return null;
 
-		SpawnObjType spawnType = (SpawnObjType)index;
-
-		if (m_prefObjs[index] == null)
-			m_prefObjs[index] = Resources.Load("Pref/"+spawnType.ToString()) as GameObject;
+		if (m_prefObjs.ContainsKey(prefName) == false)
+			m_prefObjs.Add(prefName, Resources.Load("Pref/"+prefName) as GameObject);
 
 
-		GameObject obj = Instantiate(m_prefObjs[index]) as GameObject;
-		obj.name = m_prefObjs[index].name;
+		GameObject obj = Instantiate(m_prefObjs[prefName]) as GameObject;
+		obj.name = m_prefObjs[prefName].name;
 		T spawnObj = obj.GetComponent<T>();
 		spawnObj.UID = System.Guid.NewGuid().ToString();
 		spawnObj.Colony = Colony;
