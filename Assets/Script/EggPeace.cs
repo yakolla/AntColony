@@ -27,8 +27,26 @@ public class EggPeace : Peace {
 
 	override public void OnKill()
 	{
+		Ant ant = null;
+		SpawnObjType randomType = Helper.GetColony(m_colony).AntSpawningPool.RandomSpawnType(SpawnObjType.AntWorker);
+		switch(randomType)
+		{
+		case SpawnObjType.AntWorker:
+			if (Helper.GetColony(m_colony).RoomSpawningPool.GetCount(SpawnObjType.RoomAntWorker) == 0)
+			{
+				if (Helper.GetColony(m_colony).AntSpawningPool.GetCount(randomType) < Helper.CAPACITY_ROOM )
+					ant = Helper.GetColony(m_colony).AntSpawningPool.Spawn(randomType.ToString());
+			}
+			else if (Helper.GetColony(m_colony).AntSpawningPool.GetCount(randomType) < Helper.GetColony(m_colony).RoomSpawningPool.GetCount(SpawnObjType.RoomAntWorker)*Helper.CAPACITY_ROOM )
+				ant = Helper.GetColony(m_colony).AntSpawningPool.Spawn(randomType.ToString());
 
-		Ant ant = Helper.GetColony(m_colony).AntSpawningPool.Spawn(Helper.GetColony(m_colony).AntSpawningPool.RandomSpawnType(SpawnObjType.AntWorker).ToString());
+			break;
+		case SpawnObjType.AntSoldier:
+			if (Helper.GetColony(m_colony).AntSpawningPool.GetCount(randomType) < Helper.GetColony(m_colony).RoomSpawningPool.GetCount(SpawnObjType.RoomAntSoldier)*Helper.CAPACITY_ROOM )
+				ant = Helper.GetColony(m_colony).AntSpawningPool.Spawn(randomType.ToString());
+			break;
+		}
+
 		if (ant != null)
 		{
 			Helper.GetColony(m_colony).AntSpawningPool.StartBuilding(ant, m_holder.Onwer.transform.position);

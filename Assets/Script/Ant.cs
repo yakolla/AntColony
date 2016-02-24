@@ -10,8 +10,14 @@ public class Ant : SpawnBaseObj {
 	[SerializeField]
 	int			m_maxHunger = 10;
 
+	[SerializeField]
+	int			m_age = 0;
+	[SerializeField]
+	int			m_maxAge = 10;
+
 	Animator	m_animator;
 
+	HashSet<string>	m_buff = new HashSet<string>();
 
 	AICommand m_cmd = null;
 
@@ -23,10 +29,9 @@ public class Ant : SpawnBaseObj {
 	{
 		m_navigator = GetComponent<AntNavigator>();
 		m_hunger = m_maxHunger;
-		m_carryHolder.Init(this, transform.Find("CarryHolder").GetComponent<SpriteRenderer>(), 1, 1, 0);
+		m_carryHolder.Init(this, transform.Find("CarryHolder").GetComponent<SpriteRenderer>(), 1, 1);
 		HP = MaxHP;
 		m_animator = GetComponent<Animator>();
-		StartCoroutine(LoopHenger());
 
 	}
 
@@ -34,6 +39,10 @@ public class Ant : SpawnBaseObj {
 	{
 		Point st = Point.ToPoint(transform.position);
 		m_navigator.GoTo(transform.position, m_navigator.Digy);
+
+		StartCoroutine(LoopHenger());
+		if (0 < m_maxAge)
+			StartCoroutine(LoopAge());
 	}
 
 	IEnumerator LoopHenger()
@@ -43,6 +52,17 @@ public class Ant : SpawnBaseObj {
 			yield return new WaitForSeconds(1f);
 			--m_hunger;
 		}
+	}
+
+	IEnumerator LoopAge()
+	{
+		while (m_age < m_maxAge)
+		{
+			yield return new WaitForSeconds(60f);
+			++m_age;
+		}
+
+		Helper.GetColony(Colony).AntSpawningPool.Kill(this);
 	}
 
 	public void Update()
@@ -145,7 +165,7 @@ public class Ant : SpawnBaseObj {
 					{
 						FoodPeace foodPeace = (FoodPeace)roomFood.CarryHolder.Takeout();
 						m_hunger = Mathf.Min(m_hunger+m_maxHunger, m_maxHunger);
-						StartCoroutine(LoopForBuffSpeed(foodPeace.Buff));
+						StartCoroutine(LoopForBuffSpeed(AICommandType.EAT_FOOD.ToString(), foodPeace.Buff));
 					}
 				}
 				break;
@@ -156,19 +176,23 @@ public class Ant : SpawnBaseObj {
 
 	}
 
-	IEnumerator LoopForBuffSpeed(Buff buff)
+	public IEnumerator LoopForBuffSpeed(string name, Buff buff)
 	{
-
-		SpriteRenderer ren = GetComponentInChildren<SpriteRenderer>();
-		Color backup = ren.color;
-		ren.color = buff.color;
-		m_navigator.AlphaSpeed += buff.value;
-		yield return new WaitForSeconds(buff.duration);
-
-		if (m_navigator != null)
+		if (false == m_buff.Contains(name))
 		{
-			m_navigator.AlphaSpeed -= buff.value;
-			ren.color = backup;
+			m_buff.Add(name);
+			SpriteRenderer ren = GetComponentInChildren<SpriteRenderer>();
+			Color backup = ren.color;
+			ren.color = buff.color;
+			m_navigator.AlphaSpeed += buff.value;
+			yield return new WaitForSeconds(buff.duration);
+
+			if (m_navigator != null)
+			{
+				m_navigator.AlphaSpeed -= buff.value;
+				ren.color = backup;
+				m_buff.Remove(name);
+			}
 		}
 	}
 

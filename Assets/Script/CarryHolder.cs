@@ -9,13 +9,14 @@ public class CarryHolder {
 	int				m_rows;
 	int				m_cols;
 	int				m_carryCount = 0;
+	int				m_maxCarryCount = 0;
 
 	List<Peace>	m_peaces = new List<Peace>();
 
 	ModifiedTexture2D	m_modifiedTexture2D = new ModifiedTexture2D();
 	SpawnBaseObj	m_owner;
 	// Use this for initialization
-	public void Init (SpawnBaseObj owner, SpriteRenderer renderer, int rows, int cols, int carryCount) {
+	public void Init (SpawnBaseObj owner, SpriteRenderer renderer, int rows, int cols) {
 
 		m_owner = owner;
 		m_carryHolder = renderer;
@@ -23,6 +24,7 @@ public class CarryHolder {
 		m_height = rows*Helper.ONE_PEACE_SIZE;
 		m_rows = rows;
 		m_cols = cols;
+		m_maxCarryCount = m_rows*m_cols;
 
 		Texture2D aa = new Texture2D(m_width, m_height);
 		Color32[] colors = new Color32[m_width*m_height];
@@ -40,7 +42,7 @@ public class CarryHolder {
 		if (peace == null)
 			return;
 
-		if (m_carryCount == m_rows*m_cols)
+		if (m_carryCount == MaxCarryCount)
 			return;
 
 		peace.Holder = this;
@@ -89,6 +91,11 @@ public class CarryHolder {
 	public int CarryCount
 	{
 		get { return m_carryCount;}
+	}
+
+	public int MaxCarryCount
+	{
+		get {return m_maxCarryCount;}
 	}
 
 	public SpawnBaseObj Onwer

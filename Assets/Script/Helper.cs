@@ -13,6 +13,7 @@ public enum SpawnObjType
 	RoomFood,
 	RoomEgg,
 	RoomAntWorker,
+	RoomAntSoldier,
 	Egg,
 	Count
 }
@@ -21,6 +22,7 @@ public class Helper
 {
 
 	public const int ONE_PEACE_SIZE = 16;
+	public const int CAPACITY_ROOM = 5;
 
 
 	public const int MY_COLONY=0;

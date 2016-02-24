@@ -40,6 +40,7 @@ public class RoomSpawningPool : SpawningPool<Room> {
 			startPt.x = roomPt.x;
 			startPt.y = 1;
 			Helper.GetColony(Colony).StartPoint = startPt;
+			Helper.GetBackground().SetPixel(startPt.x, startPt.y, TiledMap.Type.OPEN_TILE);
 
 			int[] angs = {60, 120, 240, 300};
 			Rect area = Helper.GetColony(Colony).Area;
@@ -58,7 +59,7 @@ public class RoomSpawningPool : SpawningPool<Room> {
 						if (pt.x < area.x || (area.width+area.x) <= pt.x || true == Helper.GetBackground().UnableTo(pt.x, pt.y))
 							continue;
 						m_spots.Add(pt);
-						Debug.Log("Colony:"+ Colony + " pt:" + pt);
+						//Debug.Log("Colony:"+ Colony + " pt:" + pt);
 					}
 					
 				}
@@ -96,32 +97,10 @@ public class RoomSpawningPool : SpawningPool<Room> {
 	{
 		while(true)
 		{
-			if (Helper.GetColony(Colony).AntSpawningPool.SpawnKeys.ContainsKey(SpawnObjType.AntWorker))
+			if (Helper.GetColony(Colony).AntSpawningPool.GetCount(SpawnObjType.AntWorker) > 0)
 			{
-				int eggRoomCount = 0;
-				if (SpawnKeys.ContainsKey(SpawnObjType.RoomEgg))
-					eggRoomCount = SpawnKeys[SpawnObjType.RoomEgg].Count;
 
-				int foodRoomCount = 0;
-				if (SpawnKeys.ContainsKey(SpawnObjType.RoomFood))
-					foodRoomCount = SpawnKeys[SpawnObjType.RoomFood].Count;
-
-				int antWorkerRoomCount = 0;
-				if (SpawnKeys.ContainsKey(SpawnObjType.RoomAntWorker))
-					antWorkerRoomCount = SpawnKeys[SpawnObjType.RoomAntWorker].Count;
-
-				if (eggRoomCount < 1)
-				{
-					if (m_spots.Count == 0)
-						break;
-
-					int randRoom = Random.Range(0, m_spots.Count);
-					
-					Room room = Spawn(SpawnObjType.RoomEgg.ToString());
-					StartBuilding(room, Point.ToVector(m_spots[randRoom]));
-					m_spots.RemoveAt(randRoom);
-				}
-				else if (foodRoomCount <= Helper.GetColony(Colony).AntSpawningPool.SpawnKeys[SpawnObjType.AntWorker].Count/5)
+				if (GetCount(SpawnObjType.RoomFood) < Helper.GetColony(Colony).AntSpawningPool.GetCount(SpawnObjType.AntWorker)/Helper.CAPACITY_ROOM)
 				{
 					if (m_spots.Count == 0)
 						break;
@@ -132,7 +111,7 @@ public class RoomSpawningPool : SpawningPool<Room> {
 					StartBuilding(room, Point.ToVector(m_spots[randRoom]));
 					m_spots.RemoveAt(randRoom);
 				}
-				else if (antWorkerRoomCount <= Helper.GetColony(Colony).AntSpawningPool.SpawnKeys[SpawnObjType.AntWorker].Count/10)
+				else if (GetCount(SpawnObjType.RoomAntWorker) <= Helper.GetColony(Colony).AntSpawningPool.GetCount(SpawnObjType.AntWorker)/Helper.CAPACITY_ROOM)
 				{
 					if (m_spots.Count == 0)
 						break;
@@ -140,6 +119,28 @@ public class RoomSpawningPool : SpawningPool<Room> {
 					int randRoom = Random.Range(0, m_spots.Count);
 					Room room = Spawn(SpawnObjType.RoomAntWorker.ToString());
 
+					StartBuilding(room, Point.ToVector(m_spots[randRoom]));
+					m_spots.RemoveAt(randRoom);
+				}
+				else if (GetCount(SpawnObjType.RoomEgg) < Helper.GetColony(Colony).AntSpawningPool.GetCount(SpawnObjType.AntWorker)/10)
+				{
+					if (m_spots.Count == 0)
+						break;
+					
+					int randRoom = Random.Range(0, m_spots.Count);
+					
+					Room room = Spawn(SpawnObjType.RoomEgg.ToString());
+					StartBuilding(room, Point.ToVector(m_spots[randRoom]));
+					m_spots.RemoveAt(randRoom);
+				}
+				else if (GetCount(SpawnObjType.RoomAntSoldier) < Helper.GetColony(Colony).AntSpawningPool.GetCount(SpawnObjType.AntWorker)/20)
+				{
+					if (m_spots.Count == 0)
+						break;
+					
+					int randRoom = Random.Range(0, m_spots.Count);
+					Room room = Spawn(SpawnObjType.RoomAntSoldier.ToString());
+					
 					StartBuilding(room, Point.ToVector(m_spots[randRoom]));
 					m_spots.RemoveAt(randRoom);
 				}

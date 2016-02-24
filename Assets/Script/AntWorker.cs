@@ -30,7 +30,11 @@ public class AntWorker : Ant {
 				Food food = target.GetComponent<Food>();
 				target = Helper.GetColony(Colony).SelectRandomRoom(SpawnObjType.RoomFood, false);
 				if (target != null)
-					m_carryHolder.PutOn(food.Slice());
+				{
+					FoodPeace foodPeace = (FoodPeace)food.Slice();
+					m_carryHolder.PutOn(foodPeace);
+					StartCoroutine(LoopForBuffSpeed(AICommandType.EAT_FOOD.ToString(), foodPeace.Buff));
+				}
 				break;
 			case SpawnObjType.RoomQueen:
 				RoomQueen roomQueen = target.GetComponent<RoomQueen>();
@@ -46,7 +50,7 @@ public class AntWorker : Ant {
 					target = null;
 				}
 				break;
-			case SpawnObjType.RoomAntWorker:
+			default:
 				{
 					target = null;
 				}

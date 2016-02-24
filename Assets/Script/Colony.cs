@@ -130,11 +130,11 @@ public class Colony  : MonoBehaviour{
 		if (false == RoomSpawningPool.Types.Contains(type))
 			return null;
 		
-		int roomCount = RoomSpawningPool.SpawnKeys[type].Count;
+		int roomCount = RoomSpawningPool.GetCount(type);
 		if (roomCount == 0)
 			return null;
 		
-		string randKey = RoomSpawningPool.SpawnKeys[type][Random.Range(0, roomCount)];
+		string randKey = RoomSpawningPool.UIDs(type)[Random.Range(0, roomCount)];
 		
 		Room room = RoomSpawningPool.GetSpawnedObject(randKey).GetComponent<Room>();
 		if (digy == false && room.HasPath == false)

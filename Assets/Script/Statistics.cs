@@ -17,29 +17,32 @@ public class Statistics : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		if (Helper.GetColony(Helper.MY_COLONY).AntSpawningPool.SpawnKeys.ContainsKey(SpawnObjType.AntWorker))
-			m_antWorkersText.text = Helper.GetColony(Helper.MY_COLONY).AntSpawningPool.SpawnKeys[SpawnObjType.AntWorker].Count.ToString();
-		else
-			m_antWorkersText.text = "0";
+		m_antWorkersText.text = Helper.GetColony(Helper.MY_COLONY).AntSpawningPool.GetCount(SpawnObjType.AntWorker).ToString() + "/" + Helper.GetColony(Helper.MY_COLONY).RoomSpawningPool.GetCount(SpawnObjType.RoomAntWorker)*Helper.CAPACITY_ROOM;
 
-		if (Helper.GetColony(Helper.MY_COLONY).AntSpawningPool.SpawnKeys.ContainsKey(SpawnObjType.AntSoldier))
-			m_antSoldiersText.text = Helper.GetColony(Helper.MY_COLONY).AntSpawningPool.SpawnKeys[SpawnObjType.AntSoldier].Count.ToString();
-		else
-			m_antSoldiersText.text = "0";
+		m_antSoldiersText.text = Helper.GetColony(Helper.MY_COLONY).AntSpawningPool.GetCount(SpawnObjType.AntSoldier).ToString() + "/" + Helper.GetColony(Helper.MY_COLONY).RoomSpawningPool.GetCount(SpawnObjType.RoomAntSoldier)*Helper.CAPACITY_ROOM;
 
-		if (Helper.GetColony(Helper.MY_COLONY).RoomSpawningPool.SpawnKeys.ContainsKey(SpawnObjType.RoomFood))
+
+		List<string> uids = Helper.GetColony(Helper.MY_COLONY).RoomSpawningPool.UIDs(SpawnObjType.RoomFood);
+		if (uids != null)
 		{
+			int maxCarryCount = 0;
 			int count = 0;
-			foreach(string uid in Helper.GetColony(Helper.MY_COLONY).RoomSpawningPool.SpawnKeys[SpawnObjType.RoomFood])
+			foreach(string uid in uids)
 			{
-				count += Helper.GetColony(Helper.MY_COLONY).RoomSpawningPool.GetSpawnedObject(uid).CarryHolder.CarryCount;
+				Room room = Helper.GetColony(Helper.MY_COLONY).RoomSpawningPool.GetSpawnedObject(uid);
+				if (room.HasPath == false)
+					continue;
+
+				count += room.CarryHolder.CarryCount;
+				maxCarryCount += room.CarryHolder.MaxCarryCount;
 			}
 
-			m_foodsText.text = count.ToString();
+			m_foodsText.text = count.ToString() + "/" + maxCarryCount;
 		}
 		else
-			m_foodsText.text = "0";
-
+		{
+			m_foodsText.text = "0/0";
+		}
 	}
 
 

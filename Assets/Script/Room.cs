@@ -27,7 +27,7 @@ public class Room : SpawnBaseObj {
 
 	void Awake()
 	{
-		m_carryHolder.Init(this, transform.Find("CarryHolder").GetComponent<SpriteRenderer>(), m_roomSerialData.m_roomSize.y/Helper.ONE_PEACE_SIZE, m_roomSerialData.m_roomSize.x/Helper.ONE_PEACE_SIZE, m_roomSerialData.m_roomSize.x*m_roomSerialData.m_roomSize.y/(Helper.ONE_PEACE_SIZE*Helper.ONE_PEACE_SIZE));
+		m_carryHolder.Init(this, transform.Find("CarryHolder").GetComponent<SpriteRenderer>(), m_roomSerialData.m_roomSize.y, m_roomSerialData.m_roomSize.x);
 		m_render = transform.Find("Body").GetComponent<SpriteRenderer>();
 	}
 

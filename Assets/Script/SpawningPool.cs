@@ -99,8 +99,7 @@ public class SpawningPool<T>  : MonoBehaviour where T : SpawnBaseObj  {
 	public void Kill(T spawned)
 	{
 		spawned.OnKill();
-		SpawnKeys[spawned.Type].Remove(spawned.UID);
-		m_objs.Remove(spawned.UID);
+		PopSpawnedObject(spawned.UID);
 		GameObject.DestroyObject(spawned.gameObject);
 	}
 
@@ -131,9 +130,20 @@ public class SpawningPool<T>  : MonoBehaviour where T : SpawnBaseObj  {
 		return defaultSpawnType;
 	}
 
-	public Dictionary<SpawnObjType, List<string> > SpawnKeys
+	public int GetCount(SpawnObjType type)
 	{
-		get {return m_keys;}
+		if (m_keys.ContainsKey(type) == false)
+			return 0;
+
+		return m_keys[type].Count;
+	}
+
+	public List<string> UIDs(SpawnObjType type)
+	{
+		if (m_keys.ContainsKey(type) == false)
+			return null;
+
+		return m_keys[type];
 	}
 
 	public List<SpawnObjType> Types

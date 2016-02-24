@@ -113,7 +113,7 @@ public class AntNavigator  : MonoBehaviour{
 					peace.Start(m_background.GetPixelTex(pt.x, pt.y, Helper.ONE_PEACE_SIZE));
 					m_ant.CarryHolder.PutOn(peace);
 
-					GoTo(Point.ToVector(Helper.GetColony(m_ant.Colony).StartPoint), Digy);
+					GoTo(Point.ToVector(Helper.GetColony(m_ant.Colony).StartPoint), false);
 					m_patrol = 2;
 
 					m_ant.Work();
@@ -124,7 +124,7 @@ public class AntNavigator  : MonoBehaviour{
 					// 다시 흙을 파.
 					m_closeNode.Clear();
 					m_path.Clear();
-					GoTo(m_target, Digy);
+					GoTo(m_target, m_oriDigy);
 					m_patrol = 0;
 					m_ant.CarryHolder.Takeout();
 				}
@@ -149,7 +149,8 @@ public class AntNavigator  : MonoBehaviour{
 					if (m_path.Count == 1)
 					{
 						m_closeNode.Clear();
-						GoTo(m_target, m_oriDigy);
+						if (m_patrol == 0)
+							GoTo(m_target, m_oriDigy);
 					}
 				}
 			}
