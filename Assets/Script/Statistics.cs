@@ -21,28 +21,10 @@ public class Statistics : MonoBehaviour {
 
 		m_antSoldiersText.text = Helper.GetColony(Helper.MY_COLONY).AntSpawningPool.GetCount(SpawnObjType.AntSoldier).ToString() + "/" + Helper.GetColony(Helper.MY_COLONY).RoomSpawningPool.GetCount(SpawnObjType.RoomAntSoldier)*Helper.CAPACITY_ROOM;
 
+		Point count = Helper.GetColony(Helper.MY_COLONY).RoomSpawningPool.GetCapacityCount(SpawnObjType.RoomFood);
+		
+		m_foodsText.text = count.x + "/" + count.y;
 
-		List<string> uids = Helper.GetColony(Helper.MY_COLONY).RoomSpawningPool.UIDs(SpawnObjType.RoomFood);
-		if (uids != null)
-		{
-			int maxCarryCount = 0;
-			int count = 0;
-			foreach(string uid in uids)
-			{
-				Room room = Helper.GetColony(Helper.MY_COLONY).RoomSpawningPool.GetSpawnedObject(uid);
-				if (room.HasPath == false)
-					continue;
-
-				count += room.CarryHolder.CarryCount;
-				maxCarryCount += room.CarryHolder.MaxCarryCount;
-			}
-
-			m_foodsText.text = count.ToString() + "/" + maxCarryCount;
-		}
-		else
-		{
-			m_foodsText.text = "0/0";
-		}
 	}
 
 

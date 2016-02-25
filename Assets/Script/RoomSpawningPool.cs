@@ -51,8 +51,8 @@ public class RoomSpawningPool : SpawningPool<Room> {
 					for (int i = 0; i < angs.Length; ++i)
 					{
 						Point pt = new Point();
-						pt.x = (int)(area.x+x+Mathf.Cos(Random.Range(angs[i]-30, angs[i]+30)*Mathf.Deg2Rad)*Random.Range(0, GAP_SIZE));
-						pt.y = (int)(area.y+y+Mathf.Sin(Random.Range(angs[i]-30, angs[i]+30)*Mathf.Deg2Rad)*Random.Range(0, GAP_SIZE));
+						pt.x = (int)(area.x+x+Mathf.Cos(Random.Range(angs[i]-30, angs[i]+30)*Mathf.Deg2Rad)*Random.Range(0, GAP_SIZE/3));
+						pt.y = (int)(area.y+y+Mathf.Sin(Random.Range(angs[i]-30, angs[i]+30)*Mathf.Deg2Rad)*Random.Range(0, GAP_SIZE/3));
 						//pt.x = (int)(area.x+x);
 						//pt.y = (int)(area.y+y);
 
@@ -100,7 +100,7 @@ public class RoomSpawningPool : SpawningPool<Room> {
 			if (Helper.GetColony(Colony).AntSpawningPool.GetCount(SpawnObjType.AntWorker) > 0)
 			{
 
-				if (GetCount(SpawnObjType.RoomFood) < Helper.GetColony(Colony).AntSpawningPool.GetCount(SpawnObjType.AntWorker)/Helper.CAPACITY_ROOM)
+				if (GetCount(SpawnObjType.RoomFood) <= Helper.GetColony(Colony).AntSpawningPool.GetCount(SpawnObjType.AntWorker)/Helper.CAPACITY_ROOM)
 				{
 					if (m_spots.Count == 0)
 						break;
@@ -148,6 +148,25 @@ public class RoomSpawningPool : SpawningPool<Room> {
 			yield return new WaitForSeconds(5f);
 		}
 
+	}
+
+	public Point GetCapacityCount(SpawnObjType type)
+	{
+		Point count = new Point();
+		List<string> uids = UIDs(type);
+		if (uids == null)
+			return count;
+
+		for (int i = 0; i < uids.Count; ++i)
+		{
+			Room room = GetSpawnedObject(uids[i]);
+			if (room.HasPath == false)
+				continue;
+			count.x += room.CarryHolder.CarryCount;
+			count.y += room.CarryHolder.MaxCarryCount;
+		}
+
+		return count;
 	}
 
 	void Update()
