@@ -44,15 +44,15 @@ public class RoomSpawningPool : SpawningPool<Room> {
 
 			int[] angs = {60, 120, 240, 300};
 			Rect area = Helper.GetColony(Colony).Area;
-			for (int y = GAP_SIZE-roomPt.y; y < area.height; y+=GAP_SIZE*3)
+			for (int y = GAP_SIZE/2-roomPt.y; y < area.height; y+=GAP_SIZE*3)
 			{
-				for (int x = GAP_SIZE-roomPt.x; x < area.width; x+=GAP_SIZE*3)
+				for (int x = GAP_SIZE/2-roomPt.x; x < area.width; x+=GAP_SIZE*3)
 				{
 					for (int i = 0; i < angs.Length; ++i)
 					{
 						Point pt = new Point();
-						pt.x = (int)(area.x+x+Mathf.Cos(Random.Range(angs[i]-30, angs[i]+30)*Mathf.Deg2Rad)*Random.Range(0, GAP_SIZE/3));
-						pt.y = (int)(area.y+y+Mathf.Sin(Random.Range(angs[i]-30, angs[i]+30)*Mathf.Deg2Rad)*Random.Range(0, GAP_SIZE/3));
+						pt.x = (int)(area.x+x+Mathf.Cos(angs[i]*Mathf.Deg2Rad)*Random.Range(GAP_SIZE/2, GAP_SIZE));
+						pt.y = (int)(area.y+y+Mathf.Sin(angs[i]*Mathf.Deg2Rad)*Random.Range(GAP_SIZE/2, GAP_SIZE));
 						//pt.x = (int)(area.x+x);
 						//pt.y = (int)(area.y+y);
 

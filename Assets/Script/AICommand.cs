@@ -5,12 +5,12 @@ using UnityEngine.UI;
 
 public enum AICommandType
 {
+	ATTACK,
 	GEN_NATURAL_ENEMY,
 	GEN_ROOM,
 	GEN_FOOD,
 	GEN_EGG,
 	EAT_FOOD,
-	ATTACK,
 	SLEEP,
 }
 

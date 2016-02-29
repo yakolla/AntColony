@@ -41,8 +41,8 @@ public class Ant : SpawnBaseObj {
 		m_navigator.GoTo(transform.position, m_navigator.Digy);
 
 		StartCoroutine(LoopHenger());
-		if (0 < m_maxAge)
-			StartCoroutine(LoopAge());
+		//if (0 < m_maxAge)
+		//	StartCoroutine(LoopAge());
 	}
 
 	IEnumerator LoopHenger()
